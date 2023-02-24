@@ -11,6 +11,7 @@ public class BenchmarkEntity {
             name = "ap_name",
             nullable = false
     )
+    private String ap_name;
     @Column(
             name = "single_core",
             nullable = false
@@ -30,5 +31,5 @@ public class BenchmarkEntity {
     private int threed_mark;
 
     @OneToMany(mappedBy = "ap_name")
-    private Set<PhoneEntity> ap_name;
+    private Set<PhoneEntity> phone;
 }
