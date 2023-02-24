@@ -18,6 +18,4 @@ public class ChattingJoinEntity {
     @JoinColumn(name = "user_idx")
     private UserEntity user_idx;
 
-
-
 }
