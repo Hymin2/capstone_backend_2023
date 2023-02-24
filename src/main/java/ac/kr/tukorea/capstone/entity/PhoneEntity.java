@@ -2,11 +2,12 @@ package ac.kr.tukorea.capstone.entity;
 
 
 import javax.persistence.*;
+import java.util.Set;
 
-@Entity(name = "phone")
-@Table(name = "phone_table")
+@Entity(name = "phone") // 엔터티 이름 설정, 코드 내에서 엔터티 이름으로 불러오기 가능
+@Table(name = "phone_table") // 데이터베이스에서 쓰는 테이블 이름
 public class PhoneEntity {
-    @Id
+    @Id // pk
     @GeneratedValue(
             strategy = GenerationType.AUTO
     )
@@ -76,4 +77,10 @@ public class PhoneEntity {
     )
     private String memory;
 
+    @ManyToOne
+    @JoinColumn(name = "ap_name")
+    private BenchmarkEntity ap_name;
+
+    @OneToMany(mappedBy = "phone_idx")
+    private Set<UsedMarketPriceEntity> phone_idx;
 }
