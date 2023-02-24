@@ -32,4 +32,9 @@ public class SaleImageEntity {
             nullable = false
     )
     private String create_time;
+
+    @ManyToOne
+    @JoinColumn(name = "sale_post_id")
+    private SalePostEntity sale_post_id;
+
 }

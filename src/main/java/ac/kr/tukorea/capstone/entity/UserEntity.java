@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "user")
 @Table(name = "user_table")
@@ -45,4 +46,12 @@ public class UserEntity {
     )
     private String email_address;
 
+    @OneToMany(mappedBy = "user_idx")
+    private Set<CommunityPostEntity> community_posts;
+
+    @OneToMany(mappedBy = "user_idx")
+    private Set<CommunityCommentEntity> community_comments;
+
+    @OneToMany(mappedBy = "user_idx")
+    private Set<SalePostEntity> sale_posts;
 }

@@ -1,9 +1,11 @@
 package ac.kr.tukorea.capstone.entity;
 
 import net.bytebuddy.dynamic.loading.InjectionClassLoader;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 import java.sql.Time;
+import java.util.Set;
 
 @Entity(name = "community_post")
 @Table(name = "community_post_table")
@@ -42,5 +44,15 @@ public class CommunityPostEntity {
     )
     private String update_time;
 
+
+    @OneToMany(mappedBy = "post_id")
+    private Set<CommunityImageEntity> images;
+
+    @OneToMany(mappedBy = "post_id")
+    private Set<CommunityCommentEntity> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private UserEntity user_idx;
 
 }

@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "sale_post")
 @Table(name = "sale_post_table")
@@ -38,4 +39,12 @@ public class SalePostEntity {
             nullable = false
     )
     private int order;
+
+    @OneToMany(mappedBy = "sale_post_id")
+    private Set<SaleImageEntity> images;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private UserEntity user_idx;
+
 }
