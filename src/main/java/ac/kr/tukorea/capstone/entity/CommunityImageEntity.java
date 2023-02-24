@@ -32,4 +32,8 @@ public class CommunityImageEntity {
             nullable = false
     )
     private String create_time;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private CommunityPostEntity post_id;
 }

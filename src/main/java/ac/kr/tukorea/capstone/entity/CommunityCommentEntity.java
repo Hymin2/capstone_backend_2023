@@ -40,4 +40,13 @@ public class CommunityCommentEntity {
     private int order;
 
 
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    private CommunityPostEntity post_id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private UserEntity user_idx;
+
+
 }
