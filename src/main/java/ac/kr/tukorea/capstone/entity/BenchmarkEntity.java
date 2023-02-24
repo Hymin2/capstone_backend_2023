@@ -11,7 +11,6 @@ public class BenchmarkEntity {
             name = "ap_name",
             nullable = false
     )
-
     @Column(
             name = "single_core",
             nullable = false
