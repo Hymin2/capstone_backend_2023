@@ -18,6 +18,9 @@ public class ChattingJoinEntity {
     @JoinColumn(name = "user_idx")
     private UserEntity user_idx;
 
+    @OneToMany(mappedBy = "user_idx")
+    private Set<ChattingContentEntity> chatting_content_user_idx;
+
 
 
 }
