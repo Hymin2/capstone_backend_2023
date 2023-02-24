@@ -27,4 +27,8 @@ public class UsedMarketPriceEntity {
             nullable = false
     )
     private String time;
+
+    @ManyToOne
+    @JoinColumn(name = "phone_idx")
+    private PhoneEntity phone_idx;
 }

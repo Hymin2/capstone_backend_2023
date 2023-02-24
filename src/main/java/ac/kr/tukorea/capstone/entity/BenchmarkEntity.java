@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "benchmark")
 @Table(name = "benchmark_table")
@@ -10,7 +11,6 @@ public class BenchmarkEntity {
             name = "ap_name",
             nullable = false
     )
-    private String ap_name;
 
     @Column(
             name = "single_core",
@@ -29,4 +29,7 @@ public class BenchmarkEntity {
             nullable = false
     )
     private int threed_mark;
+
+    @OneToMany(mappedBy = "ap_name")
+    private Set<PhoneEntity> ap_name;
 }
