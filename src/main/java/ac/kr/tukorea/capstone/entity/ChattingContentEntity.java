@@ -20,6 +20,10 @@ public class ChattingContentEntity {
     @JoinColumn(name = "chatting_room_idx")
     private ChattingJoinEntity chatting_room_idx;
 
+    @ManyToOne
+    @JoinColumn(name = "user_idx")
+    private ChattingJoinEntity user_idx;
+
     @Column(
             name = "content",
             nullable = false
@@ -31,5 +35,11 @@ public class ChattingContentEntity {
             nullable = false
     )
     private String create_time;
+
+    @Column(
+            name = "check",
+            nullable = false
+    )
+    private String check;
 }
 
