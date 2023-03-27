@@ -30,4 +30,5 @@ public class UserController {
     public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam String nickname){
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.isDuplicateNickname(nickname));
     }
+
 }

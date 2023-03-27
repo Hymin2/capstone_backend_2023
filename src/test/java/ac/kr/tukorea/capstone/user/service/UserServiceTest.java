@@ -76,4 +76,46 @@ public class UserServiceTest {
 
         userJpaRepository.delete(user);
     }
+
+    @DisplayName("ID가 중복이 아닐 때 중복확인 테스트")
+    @Test
+    void checkNoDuplicateId(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        userService.registerUser(userRegisterDto);
+        User user = userJpaRepository.findAll().get(0);
+
+        boolean b = userService.isDuplicateId("유저ID2");
+
+        assertThat(b).isEqualTo(false);
+
+        userJpaRepository.delete(user);
+    }
+
+    @DisplayName("닉네임이 중복일 때 중복확인 테스트")
+    @Test
+    void checkDuplicateNickname(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        userService.registerUser(userRegisterDto);
+        User user = userJpaRepository.findAll().get(0);
+
+        boolean b = userService.isDuplicateNickname("nickname");
+
+        assertThat(b).isEqualTo(true);
+
+        userJpaRepository.delete(user);
+    }
+
+    @DisplayName("닉네임이 중복이 아닐 때 중복확인 테스트")
+    @Test
+    void checkNoDuplicateNickname(){
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        userService.registerUser(userRegisterDto);
+        User user = userJpaRepository.findAll().get(0);
+
+        boolean b = userService.isDuplicateNickname("nickname2");
+
+        assertThat(b).isEqualTo(false);
+
+        userJpaRepository.delete(user);
+    }
 }
