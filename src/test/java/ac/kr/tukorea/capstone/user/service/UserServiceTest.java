@@ -22,24 +22,12 @@ public class UserServiceTest {
     @Test
     void successRegister(){
         UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
-        User user = new User(1, "유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
-        userJpaRepository.save(user);
-
-        User user1 = userJpaRepository.findAll().get(0);
-
-        assertThat(user1.getUserId()).isEqualTo(user.getUserId());
-        assertThat(user1.getUserPassword()).isEqualTo(user.getUserPassword());
-        assertThat(user1.getNickname()).isEqualTo(user.getNickname());
-        assertThat(user1.getEmail()).isEqualTo(user.getEmail());
-        assertThat(user1.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
-
-        userJpaRepository.delete(user1);
 
         userService.registerUser(userRegisterDto);
 
         User user2 = userJpaRepository.findAll().get(0);
 
-        assertThat(user2.getUserId()).isEqualTo(userRegisterDto.getUserId());
+        assertThat(user2.getUserName()).isEqualTo(userRegisterDto.getUserId());
         assertThat(user2.getUserPassword()).isEqualTo(userRegisterDto.getPassword());
         assertThat(user2.getNickname()).isEqualTo(userRegisterDto.getNickname());
         assertThat(user2.getEmail()).isEqualTo(userRegisterDto.getEmail());
@@ -114,6 +102,7 @@ public class UserServiceTest {
 
         boolean b = userService.isDuplicateNickname("nickname2");
 
+        System.out.println(b);
         assertThat(b).isEqualTo(false);
 
         userJpaRepository.delete(user);

@@ -4,24 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import javax.validation.constraints.NotEmpty;
 
+import javax.validation.constraints.NotEmpty;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterDto {
+public class UserLoginDto {
     @NotEmpty
     @Length(min = 3, max = 20)
     private String userName;
     @NotEmpty
     @Length(min = 6, max = 20)
     private String password;
-    @NotEmpty
-    @Length(min = 3, max = 20)
-    private String nickname;
-    @NotEmpty
-    private String phoneNumber;
-    @NotEmpty
-    private String email;
 }

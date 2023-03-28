@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
-    UserService userService;
+    private final UserService userService;
 
     @PostMapping(value = "/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDto userRegisterDto){
@@ -21,14 +21,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
     }
 
-    @GetMapping(value = "/register/check/id")
-    public ResponseEntity<Boolean> checkIdDuplicate(@RequestParam String id){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.isDuplicateId(id));
+    @GetMapping(value = "/register/check/username")
+    public ResponseEntity<String> checkIdDuplicate(@RequestParam String username){
+        if(!userService.isDuplicateId(username)) return ResponseEntity.ok("사용가능한 아이디입니다.");
+        else return ResponseEntity.ok("아이디가 이미 존재합니다.");
     }
 
     @GetMapping(value = "/register/check/nickname")
     public ResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam String nickname){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.isDuplicateNickname(nickname));
+        return ResponseEntity.ok(!userService.isDuplicateNickname(nickname));
     }
 
 }

@@ -4,9 +4,12 @@ import ac.kr.tukorea.capstone.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserJpaRepository extends JpaRepository<User, Long> {
-    boolean existsByUserId(String user_id);
+    boolean existsByUserName(String username);
     boolean existsByNickname(String nickname);
-    void deleteByUserId(String user_id);
+    void deleteByUserName(String username);
+    Optional<User> findByUserName(String username);
 }
