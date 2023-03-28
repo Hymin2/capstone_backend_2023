@@ -2,6 +2,8 @@ package ac.kr.tukorea.capstone.config.Security.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,14 +21,27 @@ public class AuthenticationProviderService implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        UserDetailsImpl userDetailsImpl = userDetailsImplService.loadUserByUsername(username);
+        UserDetailsImpl user = userDetailsImplService.loadUserByUsername(username);
 
+        return checkPassword(user, password);
+    }
 
-        return null;
+    private Authentication checkPassword(UserDetailsImpl user, String rawPassword) {
+        if(bCryptPasswordEncoder.matches(rawPassword, user.getPassword())){
+            return new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.getAuthorities()
+            );
+        }
+
+        else{
+            throw new BadCredentialsException("invalid id or password");
+        }
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return false;
+        return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
