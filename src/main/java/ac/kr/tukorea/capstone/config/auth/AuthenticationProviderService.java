@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.config.Security.auth;
+package ac.kr.tukorea.capstone.config.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;

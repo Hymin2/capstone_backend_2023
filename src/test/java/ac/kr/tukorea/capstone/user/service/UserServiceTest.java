@@ -27,7 +27,7 @@ public class UserServiceTest {
 
         User user2 = userJpaRepository.findAll().get(0);
 
-        assertThat(user2.getUserName()).isEqualTo(userRegisterDto.getUserId());
+        assertThat(user2.getUsername()).isEqualTo(userRegisterDto.getUserId());
         assertThat(user2.getUserPassword()).isEqualTo(userRegisterDto.getPassword());
         assertThat(user2.getNickname()).isEqualTo(userRegisterDto.getNickname());
         assertThat(user2.getEmail()).isEqualTo(userRegisterDto.getEmail());

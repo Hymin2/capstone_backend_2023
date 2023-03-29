@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.config.Security.auth;
+package ac.kr.tukorea.capstone.config.auth;
 
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.repository.UserJpaRepository;
@@ -20,7 +20,7 @@ public class UserDetailsImplService implements UserDetailsService {
                 () -> new UsernameNotFoundException(
                         "invalid id or password");
         User user = userJpaRepository
-                .findByUserName(username)
+                .findByUsername(username)
                 .orElseThrow(s);
 
         return new UserDetailsImpl(user);

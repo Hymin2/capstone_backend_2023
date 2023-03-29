@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.config.Security.auth;
+package ac.kr.tukorea.capstone.config.auth;
 
 import ac.kr.tukorea.capstone.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +30,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return user.getUsername();
     }
 
     @Override

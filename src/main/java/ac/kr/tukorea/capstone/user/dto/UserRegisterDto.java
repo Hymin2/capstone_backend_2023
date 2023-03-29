@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
 public class UserRegisterDto {
     @NotEmpty
     @Length(min = 3, max = 20)
-    private String userName;
+    private String username;
     @NotEmpty
     @Length(min = 6, max = 20)
     private String password;

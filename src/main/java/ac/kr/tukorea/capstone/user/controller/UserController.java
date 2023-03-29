@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.user.controller;
 
+import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.service.UserService;
@@ -16,9 +17,15 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDto userRegisterDto){
-        User user = userService.registerUser(userRegisterDto);
+        if(userService.isDuplicateId(userRegisterDto.getUsername()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("아이디가 이미 존재합니다.");
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
+        else if(userService.isDuplicateNickname(userRegisterDto.getNickname()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("닉네임이 이미 존재합니다.");
+        else {
+            User user = userService.registerUser(userRegisterDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
+        }
     }
 
     @GetMapping(value = "/register/check/username")
@@ -32,4 +39,8 @@ public class UserController {
         return ResponseEntity.ok(!userService.isDuplicateNickname(nickname));
     }
 
+    @PostMapping(value = "/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto){
+        return ResponseEntity.ok("로그인 시도");
+    }
 }

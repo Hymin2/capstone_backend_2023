@@ -5,20 +5,20 @@ spring:
     username: root
     password: root
 
-    jpa:
-      open-in-view: true
-      hibernate:
-        ddl-auto: create
-        naming:
-          physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        use-new-id-generator-mappings: false
-      show-sql: true
-      properties:
-        hibernate.format_sql: true
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 
 jwt:
-  header: Ahthorization
-  secret: f9834jf29834jf8932jg598d321rf423f2g
+  header: Authorization
+  secret: EG52gfd44g7FD0Sgw0e8rw47T3fGFDSfdssgr62gdfs34GFD1GFdfs86r432ewqg
   token-validity-in-seconds: 1800
