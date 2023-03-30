@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.config.auth.jwt;
+package ac.kr.tukorea.capstone.config.jwt;
 
 import io.jsonwebtoken.lang.Strings;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if(Strings.hasLength(header) && header.startsWith("Bearer "))
-            return header.substring(7, header.length());
+            return header.substring(7);
 
         return null;
     }

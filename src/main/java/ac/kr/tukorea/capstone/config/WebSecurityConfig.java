@@ -1,9 +1,8 @@
 package ac.kr.tukorea.capstone.config;
 
-import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
-import ac.kr.tukorea.capstone.config.auth.jwt.JwtAuthenticationFilter;
-import ac.kr.tukorea.capstone.config.auth.jwt.JwtAuthorizationFilter;
-import ac.kr.tukorea.capstone.config.auth.jwt.JwtTokenProvider;
+import ac.kr.tukorea.capstone.config.jwt.JwtAuthorizationFilter;
+import ac.kr.tukorea.capstone.config.jwt.JwtAuthenticationFilter;
+import ac.kr.tukorea.capstone.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,22 +28,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception{
+        return super.authenticationManagerBean();
+    }
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
                 .csrf().disable()
 
                 .httpBasic().disable()
-                //.formLogin().disable()
+                .formLogin().disable()
 
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(corsFilter)
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeRequests()
-                .antMatchers("api/v1/user/register/**").permitAll()
-                .antMatchers("api/v1/user/login/**").permitAll();
+                .antMatchers("/api/v1/user/register/**").permitAll()
+                .antMatchers("/api/v1/user/login/**").permitAll()
+                .anyRequest().authenticated();
     }
 }

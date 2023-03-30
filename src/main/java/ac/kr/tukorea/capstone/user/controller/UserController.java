@@ -41,8 +41,4 @@ public class UserController {
         return ResponseEntity.ok(!userService.isDuplicateNickname(nickname));
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto){
-        return ResponseEntity.ok(userDetailsImplService.loadUserByUsername(userLoginDto.getUsername()));
-    }
 }

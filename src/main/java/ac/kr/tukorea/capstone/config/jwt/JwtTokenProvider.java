@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.config.auth.jwt;
+package ac.kr.tukorea.capstone.config.jwt;
 
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
@@ -21,7 +21,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
-    @Value("$[jwt.secret]")
+    @Value("${jwt.secret}")
     private String secretKey;
 
     private final long VALID_MILISECOND = 1000L * 60 * 30;
@@ -29,6 +29,8 @@ public class JwtTokenProvider {
 
     private Key getSecretKey(){
         byte[] KeyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        System.out.println(secretKey);
+
         return Keys.hmacShaKeyFor(KeyBytes);
     }
 

@@ -6,14 +6,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationProviderService implements AuthenticationProvider {
-    private UserDetailsImplService userDetailsImplService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserDetailsImplService userDetailsImplService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -21,15 +22,17 @@ public class AuthenticationProviderService implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
+        System.out.println(username +" " + password);
+
         UserDetailsImpl user = userDetailsImplService.loadUserByUsername(username);
 
         return checkPassword(user, password);
     }
 
     private Authentication checkPassword(UserDetailsImpl user, String rawPassword) {
-        if(bCryptPasswordEncoder.matches(rawPassword, user.getPassword())){
+        if(passwordEncoder.matches(rawPassword, user.getPassword())){
             return new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
+                    user,
                     user.getPassword(),
                     user.getAuthorities()
             );

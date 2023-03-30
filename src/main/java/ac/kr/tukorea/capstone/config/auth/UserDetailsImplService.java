@@ -16,9 +16,13 @@ public class UserDetailsImplService implements UserDetailsService {
 
     @Override
     public UserDetailsImpl loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("loadUserByUsername 진입1");
         Supplier<UsernameNotFoundException> s =
                 () -> new UsernameNotFoundException(
                         "invalid id or password");
+
+        System.out.println("loadUserByUsername 진입2");
+
         User user = userJpaRepository
                 .findByUsername(username)
                 .orElseThrow(s);

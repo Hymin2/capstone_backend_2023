@@ -10,6 +10,10 @@ import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.mapper.UserMapper;
 import ac.kr.tukorea.capstone.user.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,7 +24,7 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
     private final WebSecurityConfig webSecurityConfig;
     private final UserMapper userMapper;
-    private final UserDetailsImplService userDetailsImplService;
+    private final AuthenticationManager authenticationManager;
 
     public User registerUser(UserRegisterDto userRegisterDto){
         User user = userMapper.UserRegisterInfo(userRegisterDto);
@@ -48,10 +52,4 @@ public class UserService {
         userJpaRepository.deleteByUsername(username);
     }
 
-    public boolean login(UserLoginDto userLoginDto){
-        User user = userMapper.UserLoginInfo(userLoginDto);
-        UserDetailsImpl userDetails = new UserDetailsImpl(user);
-
-        userDetailsImplService.loadUserByUsername(userDetails.getUsername());
-    }
 }

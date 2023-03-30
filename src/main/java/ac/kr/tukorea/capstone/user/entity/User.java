@@ -35,7 +35,7 @@ public class User {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
 
     public void setEncodePassword(String password) {
