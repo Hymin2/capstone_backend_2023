@@ -27,21 +27,30 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
     public User registerUser(UserRegisterDto userRegisterDto){
-        User user = userMapper.UserRegisterInfo(userRegisterDto);
-        user.setEncodePassword(webSecurityConfig.getPasswordEncoder().encode(user.getUserPassword()));
+        try {
+            User user = userMapper.UserRegisterInfo(userRegisterDto);
+            user.setEncodePassword(webSecurityConfig.getPasswordEncoder().encode(user.getUserPassword()));
 
-        Authority authority = Authority.builder()
-                .name("ROLE_USER")
-                .user(user)
-                .build();
+            Authority authority = Authority.builder()
+                    .name("ROLE_USER")
+                    .user(user)
+                    .build();
 
-        user.setAuthorities(Collections.singletonList(authority));
+            user.setAuthorities(Collections.singletonList(authority));
 
-        return userJpaRepository.save(user);
+            return userJpaRepository.save(user);
+        }catch (RuntimeException e){
+            return null;
+        }
     }
 
-    public boolean isDuplicateId(String username){
-        return userJpaRepository.existsByUsername(username);
+    public Boolean isDuplicateId(String username){
+        try{
+            boolean b = userJpaRepository.existsByUsername(username);
+            return b;
+        }catch (RuntimeException e){
+            return null;
+        }
     }
 
     public boolean isDuplicateNickname(String nickname){

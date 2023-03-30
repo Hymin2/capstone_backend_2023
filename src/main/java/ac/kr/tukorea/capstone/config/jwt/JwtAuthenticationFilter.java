@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
+import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jwtToken = jwtTokenProvider.createJwtToken(userDetails.getUsername());
 
-        response.getWriter().write("Bearer " + jwtToken);
+        response.getWriter().write("{\n" + "\t\"status\": 200,\n" + "\t\"message\": \"Login success\",\n" + "\t\"result\": \"success\",\n" + "\t\"access_token\": \"" + jwtToken + "\"\n}");
         response.getWriter().flush();
     }
 
