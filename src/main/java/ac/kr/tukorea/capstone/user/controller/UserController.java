@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.user.controller;
 
+import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.entity.User;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final UserDetailsImplService userDetailsImplService;
 
     @PostMapping(value = "/register")
     public ResponseEntity<String> register(@RequestBody UserRegisterDto userRegisterDto){
@@ -39,8 +41,8 @@ public class UserController {
         return ResponseEntity.ok(!userService.isDuplicateNickname(nickname));
     }
 
-//    @PostMapping(value = "/login")
-//    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto){
-//        return ResponseEntity.ok("로그인 시도");
-//    }
+    @PostMapping(value = "/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto){
+        return ResponseEntity.ok(userDetailsImplService.loadUserByUsername(userLoginDto.getUsername()));
+    }
 }
