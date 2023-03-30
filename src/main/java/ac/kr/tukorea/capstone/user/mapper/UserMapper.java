@@ -1,12 +1,10 @@
 package ac.kr.tukorea.capstone.user.mapper;
 
+import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
-import ac.kr.tukorea.capstone.user.entity.Authority;
 import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -18,6 +16,13 @@ public class UserMapper {
                 .nickname(userRegisterDto.getNickname())
                 .phoneNumber(userRegisterDto.getPhoneNumber())
                 .email(userRegisterDto.getEmail())
+                .build();
+    }
+
+    public User UserLoginInfo(UserLoginDto userLoginDto){
+        return User.builder()
+                .username(userLoginDto.getUsername())
+                .userPassword(userLoginDto.getPassword())
                 .build();
     }
 }
