@@ -41,16 +41,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
 
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(corsFilter)
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+
+                    .addFilter(corsFilter)
+                    .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                    .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+
+                .exceptionHandling()
+                    .authenticationEntryPoint()
+                    .accessDeniedHandler()
+                .and()
 
                 .authorizeRequests()
-                .antMatchers("/api/v1/user/register/**").permitAll()
-                .antMatchers("/api/v1/user/login/**").permitAll()
-                .anyRequest().authenticated();
+                    .antMatchers("/api/v1/user/register/**").permitAll()
+                    .antMatchers("/api/v1/user/login/**").permitAll()
+                    .anyRequest().authenticated();
     }
 }
