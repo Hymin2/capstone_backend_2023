@@ -5,6 +5,8 @@ import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +21,11 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenService jwtTokenProvider;
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider){
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenService jwtTokenProvider){
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
 
@@ -48,6 +52,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
+        log.info("---------------------------------------------------");
+        log.info("JwtAuthenticationFilter Start");
+
         return authentication;
     }
 
@@ -57,10 +64,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
 
-        String jwtToken = jwtTokenProvider.createJwtToken(userDetails.getUsername());
+        String accessToken = jwtTokenProvider.createAccessToken(userDetails.getUsername());
+        String refreshToken = jwtTokenProvider.createRefreshToken(userDetails.getUsername());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("{\n" + "\t\"status\": 200,\n" + "\t\"message\": \"Login success\",\n" + "\t\"result\": \"success\",\n" + "\t\"access_token\": \"" + jwtToken + "\"\n}");
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Authorization-refresh", "Bearer " + refreshToken);
+
+        response.getWriter().write("{\n" + "\t\"status\": 200,\n" + "\t\"message\": \"Login success\",\n" + "\t\"result\": \"success\",\n" + "\t\"access_token\": \"" + accessToken + "\"\n}");
         response.getWriter().flush();
     }
 
@@ -68,7 +79,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{\n" + "\t\"status\": 401,\n" + "\t\"message\": \"Invalid id or password\",\n" + "\t\"result\": \"failed\",\n" + "}");
+        response.getWriter().write("{\n" + "\t\"status\": 401,\n" + "\t\"message\": \"Invalid id or password\",\n" + "\t\"result\": \"failed\"\n" + "}");
         response.getWriter().flush();
     }
 }

@@ -4,7 +4,7 @@ import ac.kr.tukorea.capstone.config.handler.CustomAccessDeniedHandler;
 import ac.kr.tukorea.capstone.config.handler.CustomAuthenticationEntryPoint;
 import ac.kr.tukorea.capstone.config.jwt.JwtAuthorizationFilter;
 import ac.kr.tukorea.capstone.config.jwt.JwtAuthenticationFilter;
-import ac.kr.tukorea.capstone.config.jwt.JwtTokenProvider;
+import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ import org.springframework.web.filter.CorsFilter;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenService jwtTokenProvider;
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {

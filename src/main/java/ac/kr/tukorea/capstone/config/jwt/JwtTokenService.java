@@ -20,16 +20,16 @@ import java.util.Date;
 
 @RequiredArgsConstructor
 @Component
-public class JwtTokenProvider {
+public class JwtTokenService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long VALID_MILISECOND = 1000L * 60 * 30;
+    private final long ACCESS_VALID_SECOND = 1000L * 60 * 30;
     private final UserDetailsImplService userDetailsImplService;
+    private final JwtRefreshTokenRepository jwtRefreshTokenRepository;
 
     private Key getSecretKey(){
         byte[] KeyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
-        System.out.println(secretKey);
 
         return Keys.hmacShaKeyFor(KeyBytes);
     }
@@ -46,27 +46,43 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String jwtToken){
         UserDetailsImpl userDetails = userDetailsImplService.loadUserByUsername(getUsername(jwtToken));
 
-        return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
-    public boolean validateToken(String jwtToken){
+
+    public boolean validateAccessToken(String jwtToken){
         try{
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(getSecretKey())
                     .build()
                     .parseClaimsJws(jwtToken);
-            return claims.getBody().getExpiration().before(new Date());
-
+            return claims.getBody().getExpiration().after(new Date());
         }catch (Exception e){
             return false;
         }
     }
 
-    public String createJwtToken(String username){
+    public String createAccessToken(String username){
+        Date now = new Date();
+
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + VALID_MILISECOND))
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + ACCESS_VALID_SECOND))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+    public String createRefreshToken(String username){
+        String refreshToken = Jwts.builder()
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date())
+                .compact();
+
+        JwtRefreshToken jwtRefreshToken = new JwtRefreshToken(refreshToken, username);
+        jwtRefreshTokenRepository.save(jwtRefreshToken);
+
+        return refreshToken;
+    }
+
+
 }

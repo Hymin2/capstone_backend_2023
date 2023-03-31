@@ -57,5 +57,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
 
-
+    @GetMapping(value = "/test")
+    public ResponseEntity<String> test(){
+        return ResponseEntity.status(HttpStatus.OK).body("test");
+    }
 }
