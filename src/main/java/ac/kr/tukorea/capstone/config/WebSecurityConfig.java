@@ -1,5 +1,7 @@
 package ac.kr.tukorea.capstone.config;
 
+import ac.kr.tukorea.capstone.config.handler.CustomAccessDeniedHandler;
+import ac.kr.tukorea.capstone.config.handler.CustomAuthenticationEntryPoint;
 import ac.kr.tukorea.capstone.config.jwt.JwtAuthorizationFilter;
 import ac.kr.tukorea.capstone.config.jwt.JwtAuthenticationFilter;
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenProvider;
@@ -49,8 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .addFilterBefore(new JwtAuthorizationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
 
                 .exceptionHandling()
-                    .authenticationEntryPoint()
-                    .accessDeniedHandler()
+                    .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                    .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
 
                 .authorizeRequests()

@@ -1,12 +1,10 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
-import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,12 +59,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String jwtToken = jwtTokenProvider.createJwtToken(userDetails.getUsername());
 
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write("{\n" + "\t\"status\": 200,\n" + "\t\"message\": \"Login success\",\n" + "\t\"result\": \"success\",\n" + "\t\"access_token\": \"" + jwtToken + "\"\n}");
         response.getWriter().flush();
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("{\n" + "\t\"status\": 401,\n" + "\t\"message\": \"Invalid id or password\",\n" + "\t\"result\": \"failed\",\n" + "}");
+        response.getWriter().flush();
     }
 }
