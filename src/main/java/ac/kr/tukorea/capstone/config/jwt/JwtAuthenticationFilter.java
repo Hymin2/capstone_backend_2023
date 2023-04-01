@@ -1,10 +1,13 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
+import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import netscape.javascript.JSObject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -47,13 +50,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new RuntimeException(e);
         }
 
+        log.info("---------------------------------------------------");
+        log.info("JwtAuthenticationFilter Start");
+        log.info("로그인 시도");
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword());
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-        log.info("---------------------------------------------------");
-        log.info("JwtAuthenticationFilter Start");
 
         return authentication;
     }
@@ -61,6 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response
             , FilterChain filterChain, Authentication authentication) throws IOException {
+        log.info("로그인 성공");
 
         UserDetailsImpl userDetails = (UserDetailsImpl)authentication.getPrincipal();
 
@@ -68,18 +73,31 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtTokenProvider.createRefreshToken(userDetails.getUsername());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("Authorization-refresh", "Bearer " + refreshToken);
 
-        response.getWriter().write("{\n" + "\t\"status\": 200,\n" + "\t\"message\": \"Login success\",\n" + "\t\"result\": \"success\",\n" + "\t\"access_token\": \"" + accessToken + "\"\n}");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", 200);
+        jsonObject.put("message", "Login success");
+        jsonObject.put("result", "success");
+        jsonObject.put("access_token", accessToken);
+        jsonObject.put("refresh_token", refreshToken);
+
+        response.getWriter().print(jsonObject);
         response.getWriter().flush();
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        log.info("로그인 실패");
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{\n" + "\t\"status\": 401,\n" + "\t\"message\": \"Invalid id or password\",\n" + "\t\"result\": \"failed\"\n" + "}");
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", 401);
+        jsonObject.put("message", "Invalid id or password");
+        jsonObject.put("result", "failed");
+
+        response.getWriter().print(jsonObject);
         response.getWriter().flush();
     }
 }

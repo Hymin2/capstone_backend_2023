@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.config.handler;
 
+import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -16,7 +17,13 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("{\n" + "\t\"status\": 403,\n" + "\t\"message\": \"Access denied\",\n" + "\t\"result\": \"failed\",\n" + "}");
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", 403);
+        jsonObject.put("message", "Access denied");
+        jsonObject.put("result", "failed");
+
+        response.getWriter().print(jsonObject);
         response.getWriter().flush();
     }
 }
