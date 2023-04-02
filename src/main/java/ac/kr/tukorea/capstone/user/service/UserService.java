@@ -24,7 +24,6 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
     private final WebSecurityConfig webSecurityConfig;
     private final UserMapper userMapper;
-    private final AuthenticationManager authenticationManager;
 
     public User registerUser(UserRegisterDto userRegisterDto){
         try {

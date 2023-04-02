@@ -1,7 +1,12 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
-import io.jsonwebtoken.lang.Strings;
+import ac.kr.tukorea.capstone.config.Exception.AccessTokenExpiredException;
+import ac.kr.tukorea.capstone.config.Exception.InvalidAccessTokenException;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,27 +19,40 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-    private final JwtTokenService jwtTokenProvider;
-
+    private final JwtTokenService jwtTokenService;
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = getJwtToken(request);
+        String jwtToken = jwtTokenService.getJwtToken(request);
 
-        if(jwtToken != null && jwtTokenProvider.validateAccessToken(jwtToken)){
-            Authentication auth = jwtTokenProvider.getAuthentication(jwtToken);
+        if(!request.getRequestURI().startsWith("/api/v1/user/refresh") && jwtToken != null){
+            try {
+                jwtTokenService.validateAccessToken(jwtToken);
 
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("jwt token 유효");
+
+                Authentication auth = jwtTokenService.getAuthentication(jwtToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }catch (InvalidAccessTokenException e){
+                sendResponseMessage(response, 401, "Access token is invalid", "failed");
+            }catch (AccessTokenExpiredException e){
+                sendResponseMessage(response, 401, "Access token is expired", "failed");
+            }
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtToken(HttpServletRequest request){
-        String header = request.getHeader("Authorization");
+    private void sendResponseMessage(HttpServletResponse response, int status, String message, String result) throws IOException{
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        if(Strings.hasLength(header) && header.startsWith("Bearer "))
-            return header.substring(7);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", status);
+        jsonObject.put("message", message);
+        jsonObject.put("result", result);
 
-        return null;
+        response.getWriter().print(jsonObject);
+        response.getWriter().flush();
     }
 }

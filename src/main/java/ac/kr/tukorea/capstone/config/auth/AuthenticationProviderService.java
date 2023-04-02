@@ -52,7 +52,7 @@ public class AuthenticationProviderService implements AuthenticationProvider {
             log.info("AuthenticationProviderService End");
             log.info("---------------------------------------------------");
 
-            throw new BadCredentialsException("invalid id or password");
+            throw new BadCredentialsException("invalid password");
         }
     }
 
