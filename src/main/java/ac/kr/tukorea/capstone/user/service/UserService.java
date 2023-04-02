@@ -26,30 +26,21 @@ public class UserService {
     private final UserMapper userMapper;
 
     public User registerUser(UserRegisterDto userRegisterDto){
-        try {
-            User user = userMapper.UserRegisterInfo(userRegisterDto);
-            user.setEncodePassword(webSecurityConfig.getPasswordEncoder().encode(user.getUserPassword()));
+        User user = userMapper.UserRegisterInfo(userRegisterDto);
+        user.setEncodePassword(webSecurityConfig.getPasswordEncoder().encode(user.getUserPassword()));
 
-            Authority authority = Authority.builder()
-                    .name("ROLE_USER")
-                    .user(user)
-                    .build();
+        Authority authority = Authority.builder()
+                .name("ROLE_USER")
+                .user(user)
+                .build();
 
-            user.setAuthorities(Collections.singletonList(authority));
+        user.setAuthorities(Collections.singletonList(authority));
 
-            return userJpaRepository.save(user);
-        }catch (RuntimeException e){
-            return null;
-        }
+        return userJpaRepository.save(user);
     }
 
     public Boolean isDuplicateId(String username){
-        try{
-            boolean b = userJpaRepository.existsByUsername(username);
-            return b;
-        }catch (RuntimeException e){
-            return null;
-        }
+        return userJpaRepository.existsByUsername(username);
     }
 
     public boolean isDuplicateNickname(String nickname){
