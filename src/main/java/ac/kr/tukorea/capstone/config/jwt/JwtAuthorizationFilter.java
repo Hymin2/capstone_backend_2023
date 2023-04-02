@@ -25,22 +25,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwtToken = jwtTokenService.getJwtToken(request);
 
-        if(!request.getRequestURI().startsWith("/api/v1/user/refresh") && jwtToken != null){
-            try {
+        try {
+            if(!request.getRequestURI().startsWith("/api/v1/user/refresh") && jwtToken != null) {
                 jwtTokenService.validateAccessToken(jwtToken);
 
                 log.info("jwt token 유효");
 
                 Authentication auth = jwtTokenService.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
-                filterChain.doFilter(request, response);
-            }catch (InvalidAccessTokenException e){
-                sendResponseMessage(response, 401, "Access token is invalid", "failed");
-            }catch (AccessTokenExpiredException e){
-                sendResponseMessage(response, 401, "Access token is expired", "failed");
             }
+
+            filterChain.doFilter(request, response);
+
+        }catch (InvalidAccessTokenException e){
+            sendResponseMessage(response, 401, "Access token is invalid", "failed");
+        }catch (AccessTokenExpiredException e){
+            sendResponseMessage(response, 401, "Access token is expired", "failed");
         }
+
     }
 
     private void sendResponseMessage(HttpServletResponse response, int status, String message, String result) throws IOException{

@@ -104,7 +104,7 @@ public class JwtTokenService {
         String refreshToken = getJwtToken(request);
         validateRefreshToken(refreshToken, username);
 
-        return refreshToken;
+        return createAccessToken(username);
     }
 
     public String createRefreshToken(String username) throws RedisException {

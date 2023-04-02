@@ -19,10 +19,4 @@ public class UserMapper {
                 .build();
     }
 
-    public User UserLoginInfo(UserLoginDto userLoginDto){
-        return User.builder()
-                .username(userLoginDto.getUsername())
-                .userPassword(userLoginDto.getPassword())
-                .build();
-    }
 }
