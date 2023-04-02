@@ -33,14 +33,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 Authentication auth = jwtTokenService.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
+                filterChain.doFilter(request, response);
             }catch (InvalidAccessTokenException e){
                 sendResponseMessage(response, 401, "Access token is invalid", "failed");
             }catch (AccessTokenExpiredException e){
                 sendResponseMessage(response, 401, "Access token is expired", "failed");
             }
         }
-
-        filterChain.doFilter(request, response);
     }
 
     private void sendResponseMessage(HttpServletResponse response, int status, String message, String result) throws IOException{
