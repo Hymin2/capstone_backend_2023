@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://db-mysql:3307/capstone_test_db?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://db-mysql:3306/capstone_test_db?serverTimezone=Asia/Seoul
     username: root
     password: root
 
@@ -19,7 +19,7 @@ spring:
 
   redis:
     host: redis
-    port: 6378
+    port: 6379
 
 jwt:
   header: Authorization
