@@ -1,9 +1,7 @@
 package ac.kr.tukorea.capstone.product.entity;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,7 +9,8 @@ import java.util.List;
 @Entity
 @Table(name = "detail_table")
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Detail {
     @Id
@@ -25,6 +24,6 @@ public class Detail {
     @Column(name = "detail_content")
     private String  detailContent;
 
-    @OneToMany(mappedBy = "product_detail_id", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY)
     private List<ProductDetail> productDetails;
 }

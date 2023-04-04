@@ -1,15 +1,14 @@
 package ac.kr.tukorea.capstone.product.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "category_table")
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Builder
 public class Category {
@@ -21,7 +20,7 @@ public class Category {
     @Column(name = "category_name")
     private String categoryName;
 
-    @OneToMany(mappedBy = "product_id", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
     private List<Product> products;
 
 }

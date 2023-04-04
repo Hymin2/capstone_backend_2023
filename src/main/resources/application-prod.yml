@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-mysql:3307/capstone_test_db?serverTimezone=Asia/Seoul
+    username: root
+    password: root
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      use-new-id-generator-mappings: false
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  redis:
+    host: redis
+    port: 6378
+
+jwt:
+  header: Authorization
+  secret: EG52gfd44g7FD0Sgw0e8rw47T3fGFDSfdssgr62gdfs34GFD1GFdfs86r432ewqgG%$2g!grEwG1Fweq431g542hy53f43532y425 hioiu2c3o9hunmc12c3908ngv41980n6908-80931b6J56&@in6892

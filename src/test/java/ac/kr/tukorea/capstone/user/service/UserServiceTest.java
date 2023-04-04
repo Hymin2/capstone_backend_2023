@@ -21,30 +21,27 @@ public class UserServiceTest {
     @DisplayName("회원가입 성공 테스트")
     @Test
     void successRegister(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID1", "password", "nickname1", "phone number", "abcd@ab.cd");
 
         userService.registerUser(userRegisterDto);
 
-        User user2 = userJpaRepository.findAll().get(0);
+        User user2 = userJpaRepository.findByUsername("유저ID1").get();
 
-        assertThat(user2.getUsername()).isEqualTo(userRegisterDto.getUserId());
-        assertThat(user2.getUserPassword()).isEqualTo(userRegisterDto.getPassword());
+        assertThat(user2.getUsername()).isEqualTo(userRegisterDto.getUsername());
         assertThat(user2.getNickname()).isEqualTo(userRegisterDto.getNickname());
         assertThat(user2.getEmail()).isEqualTo(userRegisterDto.getEmail());
         assertThat(user2.getPhoneNumber()).isEqualTo(userRegisterDto.getPhoneNumber());
 
         userJpaRepository.delete(user2);
-
-        System.out.println("회원가입 테스트 성공!");
     }
 
     @DisplayName("패스워드가 암호화되서 저장되는지 테스트")
     @Test
     void saveEncodedPassword(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID2", "password", "nickname2", "phone number", "abcd@ab.cd");
         userService.registerUser(userRegisterDto);
 
-        User user = userJpaRepository.findAll().get(0);
+        User user = userJpaRepository.findByUsername("유저ID2").get();
 
         assertThat("password").isNotEqualTo(user.getUserPassword());
 
@@ -54,11 +51,11 @@ public class UserServiceTest {
     @DisplayName("ID가 중복일 때 중복확인 테스트")
     @Test
     void checkDuplicateId(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID3", "password", "nickname3", "phone number", "abcd@ab.cd");
         userService.registerUser(userRegisterDto);
-        User user = userJpaRepository.findAll().get(0);
+        User user = userJpaRepository.findByUsername("유저ID3").get();
 
-        boolean b = userService.isDuplicateId("유저ID");
+        boolean b = userService.isDuplicateId("유저ID3");
 
         assertThat(b).isEqualTo(true);
 
@@ -68,9 +65,9 @@ public class UserServiceTest {
     @DisplayName("ID가 중복이 아닐 때 중복확인 테스트")
     @Test
     void checkNoDuplicateId(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID4", "password", "nickname4", "phone number", "abcd@ab.cd");
         userService.registerUser(userRegisterDto);
-        User user = userJpaRepository.findAll().get(0);
+        User user = userJpaRepository.findByUsername("유저ID4").get();
 
         boolean b = userService.isDuplicateId("유저ID2");
 
@@ -82,11 +79,12 @@ public class UserServiceTest {
     @DisplayName("닉네임이 중복일 때 중복확인 테스트")
     @Test
     void checkDuplicateNickname(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
-        userService.registerUser(userRegisterDto);
-        User user = userJpaRepository.findAll().get(0);
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저5", "password", "nickname5", "phone number", "abcd@ab.cd");
 
-        boolean b = userService.isDuplicateNickname("nickname");
+        userService.registerUser(userRegisterDto);
+        User user = userJpaRepository.findByUsername("유저5").get();
+
+        boolean b = userService.isDuplicateNickname("nickname5");
 
         assertThat(b).isEqualTo(true);
 
@@ -96,9 +94,9 @@ public class UserServiceTest {
     @DisplayName("닉네임이 중복이 아닐 때 중복확인 테스트")
     @Test
     void checkNoDuplicateNickname(){
-        UserRegisterDto userRegisterDto = new UserRegisterDto("유저ID", "password", "nickname", "phone number", "abcd@ab.cd");
+        UserRegisterDto userRegisterDto = new UserRegisterDto("유저6", "password", "nickname6", "phone number", "abcd@ab.cd");
         userService.registerUser(userRegisterDto);
-        User user = userJpaRepository.findAll().get(0);
+        User user = userJpaRepository.findByUsername("유저6").get();
 
         boolean b = userService.isDuplicateNickname("nickname2");
 
