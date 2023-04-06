@@ -11,10 +11,10 @@ import lombok.Setter;
 @Setter
 public class MessageForm {
     private int status;
-    private String message;
+    private Object message;
     private String result;
 
-    public void setMessageForm(int status, String message, String result){
+    public void setMessageForm(int status, Object message, String result){
         this.status = status;
         this.message = message;
         this.result = result;
