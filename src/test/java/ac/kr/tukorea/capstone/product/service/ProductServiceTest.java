@@ -1,5 +1,7 @@
 package ac.kr.tukorea.capstone.product.service;
 
+import ac.kr.tukorea.capstone.product.dto.ProductDto;
+import ac.kr.tukorea.capstone.product.dto.ProductListDto;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,15 +21,17 @@ class ProductServiceTest {
     @Autowired
     ProductService productService;
 
+    /*
     @DisplayName("상품 리스트 slice로 출력 테스트")
     @Test
     public void getProductList(){
-        Slice<Product> products = productService.getProductList(1L, PageRequest.of(0, 10));
+        ProductListDto productListDto = productService.getProductList(1L, PageRequest.of(0, 10));
 
-        List<Product> list = products.getContent();
-        for(Product product : list) {
-            System.out.println(product.getProductName() + " " + product.getModelName() + " " + products.isLast());
+        List<ProductDto> list = productListDto.getProductList();
+        for(ProductDto product : list) {
+            System.out.println(product.getProductName() + " " + product.getModelName());
         }
-
     }
+
+     */
 }

@@ -27,11 +27,10 @@ public class ProductController {
     private final ProductService productService;
     @GetMapping
     @Transactional
-    public ResponseEntity<MessageForm> productList(@RequestParam long category, @PageableDefault(page = 0, size = 10) Pageable pageable){
-        Slice<Product> products = productService.getProductList(category, pageable);
-        List<Product> productList = products.getContent();
-
-        ProductListDto productListDto = new ProductListDto(productList, products.isLast());
+    public ResponseEntity<MessageForm> productList(@RequestParam long category,
+                                                   @RequestParam String filter,
+                                                   @RequestParam @PageableDefault(page = 0, size = 10) Pageable pageable){
+        ProductListDto productListDto = productService.getProductList(category, filter, pageable);
 
         MessageForm messageForm = new MessageForm(200, productListDto, "success");
 
