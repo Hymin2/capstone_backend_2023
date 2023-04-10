@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ class ProductRepositoryImplTest {
         filters[1][0] = "AP";
         filters[1][1] = "스냅드래곤8 Gen2";
 
-        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, filters, PageRequest.of(10, 10));
+        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, filters, PageRequest.of(10, 10)).getContent();
 
         for (ProductDto product : productList){
             System.out.println(product.getProductName());

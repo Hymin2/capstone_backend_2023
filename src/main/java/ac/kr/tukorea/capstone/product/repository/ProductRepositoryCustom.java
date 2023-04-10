@@ -9,5 +9,5 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 
 public interface ProductRepositoryCustom {
-    List<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, Pageable pageable);
+    Slice<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, Pageable pageable);
 }

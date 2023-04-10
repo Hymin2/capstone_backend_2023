@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, Pageable pageable) {
+    public Slice<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, Pageable pageable) {
         QProduct product = QProduct.product;
         QProductDetail productDetail = QProductDetail.productDetail;
         QDetail detail = QDetail.detail;
@@ -41,8 +42,21 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                 .innerJoin(productImage)
                 .on(productImage.product.eq(product))
                 .where(product.category.eq(category).and(booleanBuilder))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        return products;
+        return getSlice(products, pageable);
+    }
+
+    public <T> Slice<T> getSlice(List<T> list, Pageable pageable){
+        boolean hasNext = false;
+
+        if(list.size() > pageable.getPageSize()){
+            list.remove(list.size() - 1);
+            hasNext = true;
+        }
+
+        return new SliceImpl<T>(list, pageable, hasNext);
     }
 }
