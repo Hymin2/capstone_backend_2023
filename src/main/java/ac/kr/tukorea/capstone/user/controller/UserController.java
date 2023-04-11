@@ -29,46 +29,41 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public ResponseEntity<MessageForm> register(@RequestBody UserRegisterDto userRegisterDto){
-        if(userService.isDuplicateId(userRegisterDto.getUsername())) {
-            messageForm.setMessageForm(409, "Duplicated id", "failed");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
-        }
 
-        else if(userService.isDuplicateNickname(userRegisterDto.getNickname())) {
-            messageForm.setMessageForm(409, "Duplicated nickname", "failed");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
-        }
-        else {
+        try {
             User user = userService.registerUser(userRegisterDto);
 
             messageForm.setMessageForm(201, "Registration success", "success");
             return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+        }catch (RuntimeException e){
+            messageForm.setMessageForm(409, "Registration failed", "failed");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
         }
     }
 
     @GetMapping(value = "/register/check/username")
     public ResponseEntity<MessageForm> checkIdDuplicate(@RequestParam String username){
-        if(!userService.isDuplicateId(username))
+        if(!userService.isDuplicateId(username)) {
             messageForm.setMessageForm(200, "Available id", "success");
-        else{
-            messageForm.setMessageForm(200, "Duplicated id", "success");
+            return ResponseEntity.status(HttpStatus.OK).body(messageForm);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+        else{
+            messageForm.setMessageForm(409, "Duplicated id", "success");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
+        }
     }
 
     @GetMapping(value = "/register/check/nickname")
     public ResponseEntity<MessageForm> checkNicknameDuplicate(@RequestParam String nickname){
-        if(!userService.isDuplicateNickname(nickname))
+        if(!userService.isDuplicateNickname(nickname)) {
             messageForm.setMessageForm(200, "Available id", "success");
-        else{
-            messageForm.setMessageForm(200, "Duplicated id", "success");
+            return ResponseEntity.status(HttpStatus.OK).body(messageForm);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
-    }
+        else{
+            messageForm.setMessageForm(409, "Duplicated id", "success");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
+        }
 
-    @GetMapping(value = "/test")
-    public ResponseEntity<String> test(){
-        return ResponseEntity.status(HttpStatus.OK).body("test");
     }
 
     @GetMapping(value = "/refresh")

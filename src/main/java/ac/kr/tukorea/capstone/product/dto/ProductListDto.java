@@ -14,5 +14,5 @@ public class ProductListDto {
     private long category_id;
     private String category_name;
     private List<ProductDto> productList;
-    private boolean isLast;
+    private boolean hasNext;
 }
