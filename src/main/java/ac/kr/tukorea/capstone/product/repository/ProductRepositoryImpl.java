@@ -1,9 +1,12 @@
 package ac.kr.tukorea.capstone.product.repository;
 
+import ac.kr.tukorea.capstone.product.dto.ProductDetails;
+import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductDto;
 import ac.kr.tukorea.capstone.product.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +20,51 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
+    private final QProduct product = QProduct.product;
+    private final QProductDetail productDetail = QProductDetail.productDetail;
+    private final QDetail detail = QDetail.detail;
+    private final QProductImage productImage = QProductImage.productImage;
 
     @Override
-    public Slice<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, Pageable pageable) {
-        QProduct product = QProduct.product;
-        QProductDetail productDetail = QProductDetail.productDetail;
-        QDetail detail = QDetail.detail;
-        QProductImage productImage = QProductImage.productImage;
+    public List<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, String name) {
+        List<ProductDto> products = jpaQueryFactory
+                .select(Projections.bean(ProductDto.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
+                .distinct()
+                .from(product)
+                //.innerJoin(productDetail)
+                //.on(productDetail.product.eq(product))
+                //.innerJoin(detail)
+                //.on(productDetail.detail.eq(detail))
+                .innerJoin(productImage)
+                .on(productImage.product.eq(product))
+                .where(product.category.eq(category), eqFilter(filters), containsName(name))
+                .fetch();
+
+        return products;
+    }
+
+    @Override
+    public ProductDetailsDto findDetailsByProduct(Product product) {
+        List<ProductDetails> productDetails = jpaQueryFactory
+                .select(Projections.bean(ProductDetails.class, detail.detailName, detail.detailContent))
+                .from(detail)
+                .innerJoin(productDetail)
+                .on(productDetail.detail.eq(detail))
+                .innerJoin(this.product)
+                .on(productDetail.product.eq(this.product))
+                .where(this.product.eq(product))
+                .fetch();
+
+        return new ProductDetailsDto(product.getId(), productDetails);
+    }
+
+    public BooleanExpression containsName(String name){
+        if(name == null) return null;
+
+        return product.productName.contains(name);
+    }
+    public BooleanBuilder eqFilter(String[][] filters){
+        if(filters == null) return null;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
@@ -31,32 +72,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
             booleanBuilder.or(detail.detailName.eq(filter[0]).and(detail.detailContent.eq(filter[1])));
         }
 
-        List<ProductDto> products = jpaQueryFactory
-                .select(Projections.bean(ProductDto.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
-                .distinct()
-                .from(product)
-                .innerJoin(productDetail)
-                .on(productDetail.product.eq(product))
-                .innerJoin(detail)
-                .on(productDetail.detail.eq(detail).and(booleanBuilder))
-                .innerJoin(productImage)
-                .on(productImage.product.eq(product))
-                .where(product.category.eq(category).and(booleanBuilder))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-
-        return getSlice(products, pageable);
-    }
-
-    public <T> Slice<T> getSlice(List<T> list, Pageable pageable){
-        boolean hasNext = false;
-
-        if(list.size() > pageable.getPageSize()){
-            list.remove(list.size() - 1);
-            hasNext = true;
-        }
-
-        return new SliceImpl<T>(list, pageable, hasNext);
+        return booleanBuilder;
     }
 }

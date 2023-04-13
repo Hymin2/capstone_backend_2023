@@ -73,10 +73,12 @@ public class JwtTokenService {
                     .build()
                     .parseClaimsJws(jwtToken);
 
-            if(claims.getBody().getExpiration().before(new Date())) throw new AccessTokenExpiredException();
-
             log.info("유효한 Access Token");
+        }catch (ExpiredJwtException e){
+            log.info("유효 기간이 지난 Access Token");
+            throw new AccessTokenExpiredException();
         }catch (Exception e){
+            log.info("기타 유효하지 않은 Access Token");
             throw new InvalidAccessTokenException();
         }
     }

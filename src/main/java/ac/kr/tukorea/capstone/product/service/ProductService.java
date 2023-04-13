@@ -1,33 +1,48 @@
 package ac.kr.tukorea.capstone.product.service;
 
+import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
 import ac.kr.tukorea.capstone.product.entity.Category;
+import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.repository.CategoryRepository;
+import ac.kr.tukorea.capstone.product.repository.ProductRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final CategoryRepository categoryRepository;
-    private final ProductRepositoryImpl productRepository;
+    private final ProductRepositoryImpl productRepositoryImpl;
+    private final ProductRepository productRepository;
 
-
-    public ProductListDto getProductList(long categoryId, String filter, Pageable pageable){
+    public ProductListDto getProductList(long categoryId, String filter, String name){
         Category category = categoryRepository.findById(categoryId).get();
-        Slice<ProductDto> products = productRepository.findByCategoryAndFilter(category, getFilterList(filter), pageable);
+        List<ProductDto> products = productRepositoryImpl.findByCategoryAndFilter(category, getFilterList(filter), name);
 
-        ProductListDto productListDto = new ProductListDto(categoryId, category.getCategoryName() , products.getContent(), products.hasNext());
+        ProductListDto productListDto = new ProductListDto(categoryId, category.getCategoryName() , products);
 
         return productListDto;
     }
 
+    public ProductDetailsDto getProductDetails(long productId){
+        Product product = productRepository.findById(productId).get();
+
+        ProductDetailsDto productDetailsDto = productRepositoryImpl.findDetailsByProduct(product);
+
+        return productDetailsDto;
+    }
+
     public String[][] getFilterList(String filter){
-        String[] filters_code = filter.split("|");
+        if(filter == null) return null;
+
+        String[] filters_code = filter.split(",");
         String[][] filters_value = new String[filters_code.length][2];
 
         for(int i = 0; i < filters_code.length; i++){

@@ -34,10 +34,10 @@ class ProductRepositoryImplTest {
         filters[1][0] = "AP";
         filters[1][1] = "스냅드래곤8 Gen2";
 
-        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, filters, PageRequest.of(0, 10)).getContent();
+        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, null, "울트라");
 
         for (ProductDto product : productList){
-            System.out.println(product.getProductName());
+            System.out.println(product.getProductName() + " " + product.getPath());
         }
     }
 

@@ -1,24 +1,24 @@
 package ac.kr.tukorea.capstone.product.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
+import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
-import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping(value = "/api/v1/product")
@@ -28,12 +28,54 @@ public class ProductController {
     @GetMapping
     @Transactional
     public ResponseEntity<MessageForm> productList(@RequestParam long category,
-                                                   @RequestParam String filter,
-                                                   @RequestParam @PageableDefault(page = 0, size = 10) Pageable pageable){
-        ProductListDto productListDto = productService.getProductList(category, filter, pageable);
+                                                   @RequestParam(required = false) String filter,
+                                                   @RequestParam(required = false) String name){
+
+        ProductListDto productListDto = productService.getProductList(category, filter, name);
 
         MessageForm messageForm = new MessageForm(200, productListDto, "success");
 
-        return ResponseEntity.status(HttpServletResponse.SC_OK).body(messageForm);
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @GetMapping("/{product}")
+    public ResponseEntity<MessageForm> productDetails(@PathVariable long product){
+        ProductDetailsDto productDetailsDto = productService.getProductDetails(product);
+        MessageForm messageForm = new MessageForm();
+
+        if(productDetailsDto == null){
+            messageForm.setMessageForm(404, "data is not found.", "success");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageForm);
+        }
+         messageForm.setMessageForm(200, productDetailsDto, "success");
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+    @GetMapping("/img")
+    public ResponseEntity<Resource> image(@RequestParam String name){
+        String os = System.getProperty("os.name").toLowerCase();
+        String imgPath = "";
+
+        if(os.contains("win"))
+            imgPath = "c:/capstone/resource/product/img/" + name;
+        else if(os.contains("linux"))
+            imgPath = "/capstone/resource/product/img/" + name;
+
+        Resource resource = new FileSystemResource(imgPath);
+
+        if(!resource.exists()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        Path path = null;
+
+        try{
+            path = Paths.get(imgPath);
+            headers.add("Content-Type", Files.probeContentType(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity(resource, headers, HttpStatus.OK);
     }
 }
