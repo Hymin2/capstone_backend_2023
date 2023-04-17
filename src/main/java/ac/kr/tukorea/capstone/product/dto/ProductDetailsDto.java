@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.product.dto;
 
+import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductDetailsDto {
     private long id;
-    private List<ProductDetails> productDetails;
+    private List<ProductDetailVo> productDetails;
 }
 

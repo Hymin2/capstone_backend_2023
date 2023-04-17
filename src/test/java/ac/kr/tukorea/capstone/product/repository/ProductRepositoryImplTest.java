@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.product.repository;
 
+import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.product.dto.ProductDto;
 import ac.kr.tukorea.capstone.product.entity.Category;
 import ac.kr.tukorea.capstone.product.entity.Product;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,17 +29,12 @@ class ProductRepositoryImplTest {
     @Test
     public void getProductList(){
         Category category = categoryRepository.findById(1L).get();
-        String[][] filters = new String[2][2];
 
-        filters[0][0] = "RAM";
-        filters[0][1] = "12GB";
-        filters[1][0] = "AP";
-        filters[1][1] = "스냅드래곤8 Gen2";
 
-        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, null, "울트라");
+        List<ProductDto> productList = productRepository.findByCategoryAndFilter(category, Arrays.asList(ProductFilter.RamEqual4GB), null);
 
         for (ProductDto product : productList){
-            System.out.println(product.getProductName() + " " + product.getPath());
+            System.out.println(product.getProductName() + " " + product.getProductName());
         }
     }
 

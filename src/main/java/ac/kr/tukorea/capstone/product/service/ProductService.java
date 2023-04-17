@@ -8,12 +8,14 @@ import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.repository.CategoryRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepositoryImpl;
+import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,46 +41,15 @@ public class ProductService {
         return productDetailsDto;
     }
 
-    public String[][] getFilterList(String filter){
-        if(filter == null) return null;
+    public List<ProductFilter> getFilterList(String filter){
+        List<ProductFilter> productFilters = new ArrayList<>();
+        String[] filters;
 
-        String[] filters_code = filter.split(",");
-        String[][] filters_value = new String[filters_code.length][2];
+        filters = filter.split("[a-zA-Z0-9]{4}");
+        productFilters = Arrays.stream(filters)
+                .map((str) -> ProductFilter.findFilterByCode(str))
+                .collect(Collectors.toList());
 
-        for(int i = 0; i < filters_code.length; i++){
-            switch (filters_code[i]){
-                case "S1":
-                case "s1":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "4GB";
-                    break;
-                case "S2":
-                case "s2":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "6GB";
-                    break;
-                case "S3":
-                case "s3":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "8GB";
-                    break;
-                case "S4":
-                case "s4":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "10GB";
-                    break;
-                case "S5":
-                case "s5":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "12GB";
-                    break;
-                case "S6":
-                case "s6":
-                    filters_value[i][0] = "RAM";
-                    filters_value[i][1] = "14GB";
-                    break;
-            }
-        }
-        return filters_value;
+        return productFilters;
     }
 }

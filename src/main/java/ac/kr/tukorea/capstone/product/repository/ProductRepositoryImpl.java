@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.product.repository;
 
-import ac.kr.tukorea.capstone.product.dto.ProductDetails;
+import ac.kr.tukorea.capstone.config.util.ProductFilter;
+import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductDto;
 import ac.kr.tukorea.capstone.product.entity.*;
@@ -9,9 +10,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,19 +23,20 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final QDetail detail = QDetail.detail;
     private final QProductImage productImage = QProductImage.productImage;
 
+
     @Override
-    public List<ProductDto> findByCategoryAndFilter(Category category, String[][] filters, String name) {
+    public List<ProductDto> findByCategoryAndFilter(Category category, List<ProductFilter> productFilters, String name) {
         List<ProductDto> products = jpaQueryFactory
                 .select(Projections.bean(ProductDto.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
                 .distinct()
                 .from(product)
-                //.innerJoin(productDetail)
-                //.on(productDetail.product.eq(product))
-                //.innerJoin(detail)
-                //.on(productDetail.detail.eq(detail))
+                .innerJoin(productDetail)
+                .on(productDetail.product.eq(product))
+                .innerJoin(detail)
+                .on(productDetail.detail.eq(detail))
                 .innerJoin(productImage)
                 .on(productImage.product.eq(product))
-                .where(product.category.eq(category), eqFilter(filters), containsName(name))
+                .where(product.category.eq(category), eqFilter(productFilters), containsName(name))
                 .fetch();
 
         return products;
@@ -45,8 +44,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 
     @Override
     public ProductDetailsDto findDetailsByProduct(Product product) {
-        List<ProductDetails> productDetails = jpaQueryFactory
-                .select(Projections.bean(ProductDetails.class, detail.detailName, detail.detailContent))
+        List<ProductDetailVo> productDetails = jpaQueryFactory
+                .select(Projections.bean(ProductDetailVo.class, detail.detailName, detail.detailContent))
                 .from(detail)
                 .innerJoin(productDetail)
                 .on(productDetail.detail.eq(detail))
@@ -63,13 +62,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 
         return product.productName.contains(name);
     }
-    public BooleanBuilder eqFilter(String[][] filters){
-        if(filters == null) return null;
-
+    public BooleanBuilder eqFilter(List<ProductFilter> productFilters){
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        for(String[] filter : filters){
-            booleanBuilder.or(detail.detailName.eq(filter[0]).and(detail.detailContent.eq(filter[1])));
+        for(ProductFilter filter : productFilters){
+            booleanBuilder.or(filter.getFilter().get());
         }
 
         return booleanBuilder;

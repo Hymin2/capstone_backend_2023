@@ -1,4 +1,4 @@
-package ac.kr.tukorea.capstone.product.dto;
+package ac.kr.tukorea.capstone.product.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDetails{
+public class ProductDetailVo {
     private String detailName;
     private String detailContent;
 }
