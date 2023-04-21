@@ -15,9 +15,9 @@ public class GlobalExceptionHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     /*
-    [Exception] Refresh Token이 만료되었을 때
-    401 error
- */
+        [Exception] Refresh Token이 만료되었을 때
+        401 error
+    */
     @ExceptionHandler(RefreshTokenExpiredException.class)
     public ResponseEntity<MessageForm> handleRefreshTokenExpiredException(){
         log.info("Refresh Token이 존재하지 않음");

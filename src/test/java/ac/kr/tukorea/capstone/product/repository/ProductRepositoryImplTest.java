@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.product.repository;
 
 import ac.kr.tukorea.capstone.config.util.ProductFilter;
+import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductDto;
 import ac.kr.tukorea.capstone.product.entity.Category;
 import ac.kr.tukorea.capstone.product.entity.Product;
@@ -23,6 +24,8 @@ class ProductRepositoryImplTest {
     @Autowired
     private ProductRepositoryImpl productRepository;
     @Autowired
+    private ProductRepository repository;
+    @Autowired
     private CategoryRepository categoryRepository;
 
     @DisplayName("상품 리스트 slice로 출력 테스트")
@@ -38,4 +41,13 @@ class ProductRepositoryImplTest {
         }
     }
 
+    @DisplayName("상품 디테일 정보 출력 테스트")
+    @Test
+    public void getProductDetails(){
+        Product product = repository.findById(1L).get();
+
+        ProductDetailsDto productDetailsDto = productRepository.findDetailsByProduct(product);
+
+        productDetailsDto.getProductDetails().stream().forEach((p) -> System.out.println(p.getDetailName() + " " + p.getDetailContent()));
+    }
 }

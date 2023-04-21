@@ -36,17 +36,18 @@ public class ProductService {
     public ProductDetailsDto getProductDetails(long productId){
         Product product = productRepository.findById(productId).get();
 
+
         ProductDetailsDto productDetailsDto = productRepositoryImpl.findDetailsByProduct(product);
 
         return productDetailsDto;
     }
 
     public List<ProductFilter> getFilterList(String filter){
-        List<ProductFilter> productFilters = new ArrayList<>();
-        String[] filters;
+        if(filter == null) return null;
 
-        filters = filter.split("[a-zA-Z0-9]{4}");
-        productFilters = Arrays.stream(filters)
+        String[] filters = filter.split("[a-zA-Z0-9]{4}");
+
+        List<ProductFilter> productFilters = Arrays.stream(filters)
                 .map((str) -> ProductFilter.findFilterByCode(str))
                 .collect(Collectors.toList());
 

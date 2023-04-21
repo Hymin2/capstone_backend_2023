@@ -63,6 +63,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         return product.productName.contains(name);
     }
     public BooleanBuilder eqFilter(List<ProductFilter> productFilters){
+        if(productFilters == null) return null;
+
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         for(ProductFilter filter : productFilters){
