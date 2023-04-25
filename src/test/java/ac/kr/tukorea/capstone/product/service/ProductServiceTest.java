@@ -1,19 +1,15 @@
 package ac.kr.tukorea.capstone.product.service;
 
-import ac.kr.tukorea.capstone.product.dto.ProductDto;
-import ac.kr.tukorea.capstone.product.dto.ProductListDto;
-import ac.kr.tukorea.capstone.product.entity.Product;
+import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
+import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.stream.Collectors;
 
 @DisplayName("Product 리스트 및 상세 정보 출력 테스트")
 @SpringBootTest
@@ -22,16 +18,36 @@ class ProductServiceTest {
     ProductService productService;
 
     /*
-    @DisplayName("상품 리스트 slice로 출력 테스트")
+    @DisplayName("상품 리스트 출력 테스트")
     @Test
     public void getProductList(){
         ProductListDto productListDto = productService.getProductList(1L, PageRequest.of(0, 10));
 
-        List<ProductDto> list = productListDto.getProductList();
-        for(ProductDto product : list) {
+        List<ProductVo> list = productListDto.getProductList();
+        for(ProductVo product : list) {
             System.out.println(product.getProductName() + " " + product.getModelName());
         }
     }
 
      */
+
+    @DisplayName("Filter 코드 나누기 테스트")
+    @Test
+    public void splitFilterCode(){
+        String filter = "1001100210031004";
+        String[] filters = filter.split("(?<=\\G.{" + 4 + "})");
+        Arrays.stream(filters).forEach(System.out::println);
+    }
+
+    @DisplayName("Filter 코드로 BooleanExpression 받기")
+    @Test
+    public void getFilter(){
+        String filter = "1001100210031004";
+        String[] filters = filter.split("(?<=\\G.{" + 4 + "})");
+
+        List<ProductFilterDetail> productFilterDetails = Arrays.stream(ProductFilterDetail.values()).collect(Collectors.toList());
+        System.out.println(filters[0]);
+        System.out.println(filters[0].equals("1001"));
+        System.out.println(productFilterDetails.stream().filter( (i) -> i.getCode().equals(filters[0])).findFirst().get().getCode());
+    }
 }

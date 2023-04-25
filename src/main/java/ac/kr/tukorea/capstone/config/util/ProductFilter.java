@@ -1,23 +1,29 @@
 package ac.kr.tukorea.capstone.config.util;
 
 import ac.kr.tukorea.capstone.product.entity.QDetail;
+import ac.kr.tukorea.capstone.product.entity.QProduct;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Getter
 @AllArgsConstructor
 public enum ProductFilter {
-    PriceBetween400KAnd500K("1001", () -> QDetail.detail.detailName.eq("가격").and(QDetail.detail.detailContent.between("400000", "500000"))),
-    RamEqual4GB("1002", () -> QDetail.detail.detailName.eq("RAM").and(QDetail.detail.detailContent.eq("4GB")));
+    COMPANY_EQ((s1, s2) -> QProduct.product.companyName.eq(s1)),
+    COMPANY_ETC((s1, s2) -> QProduct.product.companyName.ne("삼성전자").and(QProduct.product.companyName.ne("APPLE"))),
+    RAM_EQ((s1, s2) -> QDetail.detail.detailName.eq("RAM").and(QDetail.detail.detailContent.eq(s1))),
+    MEMORY_EQ((s1, s2) -> QDetail.detail.detailName.eq("내장메모리").and(QDetail.detail.detailContent.eq(s1))),
+    SIZE_BETWEEN((s1, s2) -> QDetail.detail.detailName.eq("크기").and(QDetail.detail.detailContent.between(s1, s2))),
+    PROCESSOR_EQ((s1, s2) -> QDetail.detail.detailName.eq("프로세서").and(QDetail.detail.detailContent.like(s1))),
+    PRICE_BETWEEN((s1, s2) -> QDetail.detail.detailName.eq("가격").and(QDetail.detail.detailContent.between(s1, s2)));
 
-    private String code;
-    private Supplier<BooleanExpression> filter;
+    private BiFunction<String, String, BooleanExpression> filter;
 
-    public static ProductFilter findFilterByCode(String code){
-        return Arrays.stream(ProductFilter.values()).filter((n) -> code == n.getCode()).findAny().orElse(null);
+    public BooleanExpression getQuery(String s1, String s2){
+        return filter.apply(s1, s2);
     }
 }

@@ -1,22 +1,19 @@
-package ac.kr.tukorea.capstone.product.dto;
+package ac.kr.tukorea.capstone.product.vo;
 
-import ac.kr.tukorea.capstone.product.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class ProductVo {
     private long id;
     private String productName;
     private String modelName;
     private String companyName;
     private String path;
+    private int averagePrice;
 }

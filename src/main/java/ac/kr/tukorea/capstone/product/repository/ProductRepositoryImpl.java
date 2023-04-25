@@ -3,7 +3,7 @@ package ac.kr.tukorea.capstone.product.repository;
 import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
-import ac.kr.tukorea.capstone.product.dto.ProductDto;
+import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import ac.kr.tukorea.capstone.product.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -25,9 +25,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 
 
     @Override
-    public List<ProductDto> findByCategoryAndFilter(Category category, List<ProductFilter> productFilters, String name) {
-        List<ProductDto> products = jpaQueryFactory
-                .select(Projections.bean(ProductDto.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
+    public List<ProductVo> findByCategoryAndFilter(Category category, List<BooleanExpression> productFilters, String name) {
+        List<ProductVo> products = jpaQueryFactory
+                .select(Projections.bean(ProductVo.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
                 .distinct()
                 .from(product)
                 .innerJoin(productDetail)
@@ -62,13 +62,13 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 
         return product.productName.contains(name);
     }
-    public BooleanBuilder eqFilter(List<ProductFilter> productFilters){
+    public BooleanBuilder eqFilter(List<BooleanExpression> productFilters){
         if(productFilters == null) return null;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
-        for(ProductFilter filter : productFilters){
-            booleanBuilder.or(filter.getFilter().get());
+        for(BooleanExpression filter : productFilters){
+            booleanBuilder.or(filter);
         }
 
         return booleanBuilder;
