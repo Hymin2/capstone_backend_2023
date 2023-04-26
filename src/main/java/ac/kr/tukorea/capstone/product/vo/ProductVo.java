@@ -16,4 +16,8 @@ public class ProductVo {
     private String companyName;
     private String path;
     private int averagePrice;
+
+    public void setAveragePrice(int averagePrice){
+        this.averagePrice = averagePrice;
+    }
 }

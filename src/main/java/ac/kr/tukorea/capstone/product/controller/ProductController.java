@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 public class ProductController {
     private final ProductService productService;
     @GetMapping
-    @Transactional
     public ResponseEntity<MessageForm> productList(@RequestParam long category,
                                                    @RequestParam(required = false) String filter,
                                                    @RequestParam(required = false) String name){

@@ -1,11 +1,20 @@
 package ac.kr.tukorea.capstone.product.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "used_product_price_table")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UsedProductPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
