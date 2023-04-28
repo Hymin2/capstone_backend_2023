@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.user.service;
 
+import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.repository.UserJpaRepository;
@@ -7,6 +8,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.assertj.core.api.Assertions.*;
 
 
@@ -104,5 +111,18 @@ public class UserServiceTest {
         assertThat(b).isEqualTo(false);
 
         userJpaRepository.delete(user);
+    }
+
+    @DisplayName("UserDetails authorities 출력 테스트")
+    @Test
+    void printUserDetailAuthorities(){
+        User user = userJpaRepository.findByUsername("user12").get();
+        UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+        userDetails.getAuthorities().stream().forEach(System.out::println);
+
+        System.out.println(userDetails.getAuthorities());
+
+        List<String> list = userDetails.getAuthorities().stream().map(String::valueOf).collect(Collectors.toList());
     }
 }

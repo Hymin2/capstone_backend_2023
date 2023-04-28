@@ -7,6 +7,8 @@ import ac.kr.tukorea.capstone.config.Exception.InvalidRefreshTokenException;
 import ac.kr.tukorea.capstone.config.Exception.RefreshTokenExpiredException;
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
+import ac.kr.tukorea.capstone.user.entity.Authority;
+import ac.kr.tukorea.capstone.user.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.lang.Strings;
 import io.jsonwebtoken.security.Keys;
@@ -17,12 +19,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.Collection;
 
 @RequiredArgsConstructor
 @Component
@@ -50,11 +56,22 @@ public class JwtTokenService {
                 .getSubject();
     }
 
-    public Authentication getAuthentication(String jwtToken){
+    public Authentication getAuthentication(String token){
         log.info("User 정보 불러오기");
-        UserDetailsImpl userDetails = userDetailsImplService.loadUserByUsername(getUsername(jwtToken));
+        Claims claims = parseClaims(token).getBody();
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        Collection<? extends GrantedAuthority> authorities = Arrays
+                .stream(claims.get("auth")
+                .toString().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+         UserDetailsImpl userDetails = new UserDetailsImpl(User
+                         .builder()
+                         .username(claims.getSubject())
+                            .build());
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
     public String getJwtToken(HttpServletRequest request){
@@ -66,12 +83,9 @@ public class JwtTokenService {
         return null;
     }
 
-    public void validateAccessToken(String jwtToken){
+    public void validateAccessToken(String accessToken){
         try{
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(getSecretKey())
-                    .build()
-                    .parseClaimsJws(jwtToken);
+            Jws<Claims> claims = parseClaims(accessToken);
 
             log.info("유효한 Access Token");
         }catch (ExpiredJwtException e){
@@ -83,6 +97,10 @@ public class JwtTokenService {
         }
     }
 
+    public Jws<Claims> parseClaims(String token) throws RuntimeException{
+        return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
+    }
+
     public void validateRefreshToken(String refreshToken, String username){
         JwtRefreshToken jwtRefreshToken = jwtRefreshTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new RefreshTokenExpiredException());
 
@@ -91,11 +109,18 @@ public class JwtTokenService {
         log.info("유효한 Refresh Token");
     }
 
-    public String createAccessToken(String username){
+    public String createAccessToken(UserDetailsImpl userDetails){
         Date now = new Date();
 
+        String authorities = userDetails
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userDetails.getUsername())
+                .claim("auth", authorities)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + ACCESS_VALID_SECOND))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
@@ -106,7 +131,7 @@ public class JwtTokenService {
         String refreshToken = getJwtToken(request);
         validateRefreshToken(refreshToken, username);
 
-        return createAccessToken(username);
+        return createAccessToken(userDetailsImplService.loadUserByUsername(username));
     }
 
     public String createRefreshToken(String username) throws RedisException {
