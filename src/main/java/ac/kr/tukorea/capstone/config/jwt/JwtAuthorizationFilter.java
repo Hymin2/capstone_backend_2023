@@ -27,16 +27,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         try {
             if(!request.getRequestURI().startsWith("/api/v1/user/refresh") && !request.getRequestURI().startsWith("/api/v1/user/register") && jwtToken != null) {
-                jwtTokenService.validateAccessToken(jwtToken);
-
-                log.info("jwt token 유효");
-
                 Authentication auth = jwtTokenService.getAuthentication(jwtToken);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-
             filterChain.doFilter(request, response);
-
         }catch (InvalidAccessTokenException e){
             sendResponseMessage(response, 401, "Access token is invalid", "failed");
         }catch (AccessTokenExpiredException e){

@@ -47,15 +47,6 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(KeyBytes);
     }
 
-    private String getUsername(String jwtToken){
-        return Jwts.parserBuilder()
-                .setSigningKey(getSecretKey())
-                .build()
-                .parseClaimsJws(jwtToken)
-                .getBody()
-                .getSubject();
-    }
-
     public Authentication getAuthentication(String token){
         log.info("User 정보 불러오기");
         Claims claims = parseClaims(token).getBody();
@@ -83,11 +74,14 @@ public class JwtTokenService {
         return null;
     }
 
-    public void validateAccessToken(String accessToken){
-        try{
-            Jws<Claims> claims = parseClaims(accessToken);
-
-            log.info("유효한 Access Token");
+    public Jws<Claims> parseClaims(String token){
+        try {
+            Jws<Claims> claims = Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSecretKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return claims;
         }catch (ExpiredJwtException e){
             log.info("유효 기간이 지난 Access Token");
             throw new AccessTokenExpiredException();
@@ -95,10 +89,6 @@ public class JwtTokenService {
             log.info("기타 유효하지 않은 Access Token");
             throw new InvalidAccessTokenException();
         }
-    }
-
-    public Jws<Claims> parseClaims(String token) throws RuntimeException{
-        return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token);
     }
 
     public void validateRefreshToken(String refreshToken, String username){
