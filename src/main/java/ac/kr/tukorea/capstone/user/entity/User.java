@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.user.entity;
 
+import ac.kr.tukorea.capstone.market.entity.Market;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
+
+    @OneToOne(mappedBy = "user")
+    private Market market;
 
     public void setEncodePassword(String password) {
         this.userPassword = password;

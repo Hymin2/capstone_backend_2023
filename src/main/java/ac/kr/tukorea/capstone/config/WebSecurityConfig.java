@@ -57,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                     .antMatchers("/api/v1/user/register/**", "/api/v1/user/refresh/**").permitAll()
+                    .antMatchers("/api/v1/market/**").hasRole("ROLE_SELLER")
                     .anyRequest().authenticated();
     }
 }

@@ -48,7 +48,7 @@ public class JwtTokenService {
     }
 
     public Authentication getAuthentication(String token){
-        log.info("User 정보 불러오기");
+        log.info("Access Token 으로 User 정보 불러오기");
         Claims claims = parseClaims(token).getBody();
 
         Collection<? extends GrantedAuthority> authorities = Arrays
@@ -61,7 +61,7 @@ public class JwtTokenService {
                          .builder()
                          .username(claims.getSubject())
                             .build());
-
+        log.info("username: " + userDetails.getUsername() + " ");
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
