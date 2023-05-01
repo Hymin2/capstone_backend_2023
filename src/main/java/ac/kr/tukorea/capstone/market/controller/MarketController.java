@@ -1,69 +1,84 @@
 package ac.kr.tukorea.capstone.market.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import org.springframework.http.RequestEntity;
+import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
+import ac.kr.tukorea.capstone.market.service.MarketService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/market")
+@RequiredArgsConstructor
 public class MarketController {
-    @GetMapping("/{username}")
-    public RequestEntity<MessageForm> existMarket(@PathVariable String username) {
+    private final MarketService marketService;
+
+    @PostMapping("/register")
+    public ResponseEntity<MessageForm> registerMarket(@RequestBody MarketRegisterDto marketRegisterDto){
+        MessageForm messageForm;
+        marketService.registerMarket(marketRegisterDto);
+
+        messageForm = new MessageForm(201, "Registration success", "success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
 
     }
 
-    @PostMapping
-    public RequestEntity<MessageForm> createMarket(){
+    /*
+    @GetMapping("/{username}")
+    public ResponseEntity<MessageForm> existMarket(@PathVariable String username) {
 
     }
 
     @PutMapping
-    public RequestEntity<MessageForm> updateMarketName(){
+    public ResponseEntity<MessageForm> updateMarketName(){
 
     }
 
     @PostMapping("/post")
-    public RequestEntity<MessageForm> createSalePost(){
+    public ResponseEntity<MessageForm> createSalePost(){
 
     }
 
     @GetMapping("/post")
-    public RequestEntity<MessageForm> getSalePostList(){
+    public ResponseEntity<MessageForm> getSalePostList(){
 
     }
 
     @GetMapping("/post/{id}")
-    public RequestEntity<MessageForm> getSalePostDetails(@PathVariable(name = "id") Long postId){
+    public ResponseEntity<MessageForm> getSalePostDetails(@PathVariable(name = "id") Long postId){
 
     }
 
     @PutMapping("/post/{id}")
-    public RequestEntity<MessageForm> updatePostDetails(@PathVariable(name = "id") Long postId){
+    public ResponseEntity<MessageForm> updatePostDetails(@PathVariable(name = "id") Long postId){
 
     }
 
     @DeleteMapping("/post/{id}")
-    public RequestEntity<MessageForm> deletePost(@PathVariable(name = "id") Long postId){
+    public ResponseEntity<MessageForm> deletePost(@PathVariable(name = "id") Long postId){
 
     }
 
     @PostMapping("/want/market")
-    public RequestEntity<MessageForm> createWantMarket(){
+    public ResponseEntity<MessageForm> createWantMarket(){
 
     }
 
     @DeleteMapping("/want/market")
-    public RequestEntity<MessageForm> deleteWantMarket(){
+    public ResponseEntity<MessageForm> deleteWantMarket(){
 
     }
 
     @PostMapping("/want/post")
-    public RequestEntity<MessageForm> createWantPost(){
+    public ResponseEntity<MessageForm> createWantPost(){
 
     }
 
     @DeleteMapping("/want/post")
-    public RequestEntity<MessageForm> deleteWantPost(){
+    public ResponseEntity<MessageForm> deleteWantPost(){
 
     }
+
+     */
 }

@@ -8,6 +8,7 @@ import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -57,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .authorizeRequests()
                     .antMatchers("/api/v1/user/register/**", "/api/v1/user/refresh/**").permitAll()
-                    .antMatchers("/api/v1/market/**").hasRole("ROLE_SELLER")
+                    .antMatchers(HttpMethod.POST,"/api/v1/market/post/**").hasRole("SELLER")
                     .anyRequest().authenticated();
     }
 }

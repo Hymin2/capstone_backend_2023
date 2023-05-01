@@ -1,20 +1,12 @@
 package ac.kr.tukorea.capstone.user.service;
 
 import ac.kr.tukorea.capstone.config.WebSecurityConfig;
-import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
-import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
-import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.entity.Authority;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.mapper.UserMapper;
-import ac.kr.tukorea.capstone.user.repository.UserJpaRepository;
+import ac.kr.tukorea.capstone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -22,7 +14,7 @@ import java.util.Collections;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final WebSecurityConfig webSecurityConfig;
     private final UserMapper userMapper;
 
@@ -37,19 +29,19 @@ public class UserService {
 
         user.setAuthorities(Collections.singletonList(authority));
 
-        return userJpaRepository.save(user);
+        return userRepository.save(user);
     }
 
     public Boolean isDuplicateId(String username){
-        return userJpaRepository.existsByUsername(username);
+        return userRepository.existsByUsername(username);
     }
 
     public boolean isDuplicateNickname(String nickname){
-        return userJpaRepository.existsByNickname(nickname);
+        return userRepository.existsByNickname(nickname);
     }
 
     public void deleteUser(String username){
-        userJpaRepository.deleteByUsername(username);
+        userRepository.deleteByUsername(username);
     }
 
 }

@@ -2,7 +2,7 @@ package ac.kr.tukorea.capstone.config.auth;
 
 
 import ac.kr.tukorea.capstone.user.entity.User;
-import ac.kr.tukorea.capstone.user.repository.UserJpaRepository;
+import ac.kr.tukorea.capstone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 @Service
 @RequiredArgsConstructor
 public class UserDetailsImplService implements UserDetailsService {
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
     @Override
@@ -30,7 +30,7 @@ public class UserDetailsImplService implements UserDetailsService {
         log.info("UserDetailsImplService End");
         log.info("---------------------------------------------------");
 
-        User user = userJpaRepository
+        User user = userRepository
                 .findByUsername(username).orElseThrow(s);
 
         return new UserDetailsImpl(user);

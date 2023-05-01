@@ -1,7 +1,6 @@
 package ac.kr.tukorea.capstone.config.handler;
 
-import ac.kr.tukorea.capstone.config.Exception.InvalidRefreshTokenException;
-import ac.kr.tukorea.capstone.config.Exception.RefreshTokenExpiredException;
+import ac.kr.tukorea.capstone.config.Exception.*;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,39 @@ public class GlobalExceptionHandler {
         log.info("Refresh Token의 username과 요청한 username이 같지 않음");
         MessageForm messageForm = new MessageForm(401, "Refresh token is invalid", "failed");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(messageForm);
+    }
+
+    /*
+        [Exception] Username을 찾을 수 없을 때
+        404 error
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<MessageForm> handleUsernameNotFoundException() {
+        log.info("username이 존재하지 않음");
+        MessageForm messageForm = new MessageForm(404, "Username is not found", "failed");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageForm);
+    }
+
+    /*
+        [Exception] Market의 이름이 중복일 때
+        409 error
+     */
+    @ExceptionHandler(DuplicateMarketNameException.class)
+    public ResponseEntity<MessageForm> handleDuplicateMarketNameException() {
+        log.info("Market의 이름이 중복");
+        MessageForm messageForm = new MessageForm(409, "Duplicate market name", "failed");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
+    }
+
+    /*
+        [Exception] User의 Market이 이미 존재할 때
+        409 error
+     */
+    @ExceptionHandler(ExistingMarketOfUserException.class)
+    public ResponseEntity<MessageForm> handleExistingMarketOfUserException() {
+        log.info("Market을 생성하려는 User의 Market이 이미 존재");
+        MessageForm messageForm = new MessageForm(409, "An existing market of user", "failed");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
     }
 
     // Runtime error
