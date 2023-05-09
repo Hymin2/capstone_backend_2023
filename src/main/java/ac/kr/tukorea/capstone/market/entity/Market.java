@@ -17,9 +17,13 @@ public class Market {
     private long id;
 
     @Column(name = "market_name", unique = true)
-    private String market_name;
+    private String marketName;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setMarketName(String marketName){
+        this.marketName = marketName;
+    }
 }

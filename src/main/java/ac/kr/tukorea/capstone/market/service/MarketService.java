@@ -1,7 +1,9 @@
 package ac.kr.tukorea.capstone.market.service;
 
+import ac.kr.tukorea.capstone.config.Exception.DuplicateMarketNameException;
+import ac.kr.tukorea.capstone.config.Exception.ExistingMarketOfUserException;
 import ac.kr.tukorea.capstone.config.Exception.UsernameNotFoundException;
-import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
+import ac.kr.tukorea.capstone.market.dto.MarketSaveDto;
 import ac.kr.tukorea.capstone.market.entity.Market;
 import ac.kr.tukorea.capstone.market.repository.MarketRepository;
 import ac.kr.tukorea.capstone.user.entity.Authority;
@@ -20,20 +22,38 @@ public class MarketService {
     private final AuthorityRepository authorityRepository;
 
     @Transactional
-    public void registerMarket(MarketRegisterDto marketRegisterDto) throws RuntimeException{
-        User user = userRepository.findByUsername(marketRegisterDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
-        Market market = Market.builder()
-                .market_name(marketRegisterDto.getMarketName())
-                .user(user)
-                .build();
+    public void registerMarket(MarketSaveDto marketSaveDto){
+        User user = userRepository.findByUsername(marketSaveDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
 
-        marketRepository.save(market);
+        if(isExistMarketOfUer(user)) throw new ExistingMarketOfUserException();
 
-        Authority authority = Authority.builder()
-                .name("ROLE_SELLER")
-                .user(user)
-                .build();
-        authorityRepository.save(authority);
+        try {
+            Market market = Market.builder()
+                    .marketName(marketSaveDto.getMarketName())
+                    .user(user)
+                    .build();
 
+            marketRepository.save(market);
+
+            Authority authority = Authority.builder()
+                    .name("ROLE_SELLER")
+                    .user(user)
+                    .build();
+
+            authorityRepository.save(authority);
+        }catch (RuntimeException e){
+            throw new DuplicateMarketNameException();
+        }
+    }
+
+    public boolean isExistMarketOfUer(User user){
+        return marketRepository.existsByUser(user);
+    }
+
+    @Transactional
+    public void updateMarketName(MarketSaveDto marketSaveDto, String oldMarketName){
+        Market market = marketRepository.findByMarketName(oldMarketName).orElseThrow();
+
+        market.setMarketName(marketSaveDto.getMarketName());
     }
 }

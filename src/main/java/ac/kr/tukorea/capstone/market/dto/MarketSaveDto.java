@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MarketRegisterDto {
+public class MarketSaveDto {
     private String username;
     private String marketName;
 }

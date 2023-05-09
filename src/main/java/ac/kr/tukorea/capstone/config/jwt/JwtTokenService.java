@@ -62,6 +62,9 @@ public class JwtTokenService {
                          .username(claims.getSubject())
                             .build());
         log.info("username: " + userDetails.getUsername() + " ");
+        log.info("Authority: " + authorities);
+        log.info("jwt body: " + claims.get("auth"));
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
@@ -101,6 +104,8 @@ public class JwtTokenService {
 
     public String createAccessToken(UserDetailsImpl userDetails){
         Date now = new Date();
+
+        log.info("create jwt authority: ", userDetails.getAuthorities());
 
         String authorities = userDetails
                 .getAuthorities()

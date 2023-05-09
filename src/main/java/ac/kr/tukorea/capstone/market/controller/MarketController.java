@@ -1,7 +1,7 @@
 package ac.kr.tukorea.capstone.market.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
+import ac.kr.tukorea.capstone.market.dto.MarketSaveDto;
 import ac.kr.tukorea.capstone.market.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,28 +13,34 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MarketController {
     private final MarketService marketService;
-
+    MessageForm messageForm;
     @PostMapping("/register")
-    public ResponseEntity<MessageForm> registerMarket(@RequestBody MarketRegisterDto marketRegisterDto){
-        MessageForm messageForm;
-        marketService.registerMarket(marketRegisterDto);
+    public ResponseEntity<MessageForm> registerMarket(@RequestBody MarketSaveDto marketSaveDto){
+        marketService.registerMarket(marketSaveDto);
 
         messageForm = new MessageForm(201, "Registration success", "success");
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
 
+
+    @GetMapping("/check")
+    public ResponseEntity<MessageForm> checkExistMarket() {
+        messageForm = new MessageForm(200, "Access success", "success");
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+
+    @PutMapping(value = "{marketName}")
+    public ResponseEntity<MessageForm> updateMarketName(@PathVariable String marketName,
+                                                        @RequestBody MarketSaveDto marketSaveDto){
+        System.out.println(marketName);
+        marketService.updateMarketName(marketSaveDto, marketName);
+
+        messageForm = new MessageForm(201, "Market name change success", "success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
 
     /*
-    @GetMapping("/{username}")
-    public ResponseEntity<MessageForm> existMarket(@PathVariable String username) {
-
-    }
-
-    @PutMapping
-    public ResponseEntity<MessageForm> updateMarketName(){
-
-    }
-
     @PostMapping("/post")
     public ResponseEntity<MessageForm> createSalePost(){
 
