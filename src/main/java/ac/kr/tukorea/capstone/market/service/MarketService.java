@@ -56,4 +56,9 @@ public class MarketService {
 
         market.setMarketName(marketSaveDto.getMarketName());
     }
+
+    @Transactional
+    public void uploadImage(){
+
+    }
 }

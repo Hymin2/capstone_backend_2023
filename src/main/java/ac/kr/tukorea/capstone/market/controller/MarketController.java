@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/market")
@@ -33,13 +34,17 @@ public class MarketController {
     @PutMapping(value = "{marketName}")
     public ResponseEntity<MessageForm> updateMarketName(@PathVariable String marketName,
                                                         @RequestBody MarketSaveDto marketSaveDto){
-        System.out.println(marketName);
         marketService.updateMarketName(marketSaveDto, marketName);
 
         messageForm = new MessageForm(201, "Market name change success", "success");
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
 
+    @PostMapping(value = "{marketName}")
+    public ResponseEntity<MessageForm> uploadMarketProfileImage(@PathVariable String marketName,
+                                                                @RequestParam MultipartFile file){
+
+    }
     /*
     @PostMapping("/post")
     public ResponseEntity<MessageForm> createSalePost(){
