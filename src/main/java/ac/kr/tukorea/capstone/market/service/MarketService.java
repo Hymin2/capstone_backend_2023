@@ -3,9 +3,12 @@ package ac.kr.tukorea.capstone.market.service;
 import ac.kr.tukorea.capstone.config.Exception.DuplicateMarketNameException;
 import ac.kr.tukorea.capstone.config.Exception.ExistingMarketOfUserException;
 import ac.kr.tukorea.capstone.config.Exception.UsernameNotFoundException;
+import ac.kr.tukorea.capstone.market.dto.MarketDto;
 import ac.kr.tukorea.capstone.market.dto.MarketSaveDto;
 import ac.kr.tukorea.capstone.market.entity.Market;
+import ac.kr.tukorea.capstone.market.entity.Post;
 import ac.kr.tukorea.capstone.market.repository.MarketRepository;
+import ac.kr.tukorea.capstone.market.repository.PostRepository;
 import ac.kr.tukorea.capstone.user.entity.Authority;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.repository.AuthorityRepository;
@@ -14,10 +17,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MarketService {
     private final MarketRepository marketRepository;
+    private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
 
@@ -59,6 +65,12 @@ public class MarketService {
 
     @Transactional
     public void uploadImage(){
+
+    }
+
+    public MarketDto getMarket(String marketName){
+        Market market = marketRepository.findByMarketName(marketName).orElseThrow();
+        List<Post> posts = postRepository.findByMarket(market);
 
     }
 }

@@ -4,6 +4,7 @@ import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "market_table")
@@ -22,6 +23,9 @@ public class Market {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "market")
+    private List<Post> posts;
 
     public void setMarketName(String marketName){
         this.marketName = marketName;

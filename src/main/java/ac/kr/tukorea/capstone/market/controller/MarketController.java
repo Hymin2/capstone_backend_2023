@@ -40,6 +40,11 @@ public class MarketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
 
+    @GetMapping(value = "{marketName}")
+    public ResponseEntity<MessageForm> getMarket(@PathVariable String marketName){
+
+    }
+
     @PostMapping(value = "{marketName}")
     public ResponseEntity<MessageForm> uploadMarketProfileImage(@PathVariable String marketName,
                                                                 @RequestParam MultipartFile file){
