@@ -47,7 +47,7 @@ public class Post {
     @JoinColumn(name = "market_id")
     private Market market;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostImage> postImages;
 
     @ManyToOne
