@@ -1,7 +1,9 @@
 package ac.kr.tukorea.capstone.market.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
+import ac.kr.tukorea.capstone.market.dto.MarketDto;
 import ac.kr.tukorea.capstone.market.dto.MarketSaveDto;
+import ac.kr.tukorea.capstone.market.entity.Market;
 import ac.kr.tukorea.capstone.market.service.MarketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,20 +44,26 @@ public class MarketController {
 
     @GetMapping(value = "{marketName}")
     public ResponseEntity<MessageForm> getMarket(@PathVariable String marketName){
+        MarketDto marketDto = marketService.getMarket(marketName);
+        messageForm = new MessageForm(200, marketDto, "success");
 
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
+
 
     @PostMapping(value = "{marketName}")
     public ResponseEntity<MessageForm> uploadMarketProfileImage(@PathVariable String marketName,
-                                                                @RequestParam MultipartFile file){
+                                                                @RequestParam MultipartFile multipartFile){
+        marketService.uploadImage(multipartFile, marketName);
 
     }
-    /*
+
+
     @PostMapping("/post")
     public ResponseEntity<MessageForm> createSalePost(){
 
     }
-
+    /*
     @GetMapping("/post")
     public ResponseEntity<MessageForm> getSalePostList(){
 

@@ -39,9 +39,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
 
-    @OneToOne(mappedBy = "user")
-    private Market market;
-
     public void setEncodePassword(String password) {
         this.userPassword = password;
     }

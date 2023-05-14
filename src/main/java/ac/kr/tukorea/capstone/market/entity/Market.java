@@ -20,6 +20,12 @@ public class Market {
     @Column(name = "market_name", unique = true)
     private String marketName;
 
+    @Column(name = "market_img_path")
+    private String marketImagePath;
+
+    @Column(name = "market_img_size")
+    private long marketImageSize;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -30,4 +36,6 @@ public class Market {
     public void setMarketName(String marketName){
         this.marketName = marketName;
     }
+    public void setMarketImagePath(String marketImagePath) {this.marketImagePath = marketImagePath;}
+    public void setMarketImageSize(long marketImageSize) {this.marketImageSize = marketImageSize;}
 }

@@ -16,7 +16,7 @@ public class MarketDto {
     private long id;
     private String marketName;
     private String marketImg;
-    private int salesCompleted;
+    private int soldOut;
     private int onSales;
     private List<PostVo> posts;
 }

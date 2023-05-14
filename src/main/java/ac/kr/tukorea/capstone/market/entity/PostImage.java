@@ -21,7 +21,7 @@ public class PostImage {
     private String imagePath;
 
     @Column(name = "image_size")
-    private int imageSize;
+    private long imageSize;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
