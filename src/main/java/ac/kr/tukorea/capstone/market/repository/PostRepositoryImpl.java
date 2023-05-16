@@ -2,8 +2,11 @@ package ac.kr.tukorea.capstone.market.repository;
 
 import ac.kr.tukorea.capstone.market.entity.Post;
 import ac.kr.tukorea.capstone.market.entity.QPost;
+import ac.kr.tukorea.capstone.market.entity.QPostImage;
+import ac.kr.tukorea.capstone.market.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +19,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
     private final QPost post = QPost.post;
+
     @Override
     public List<Post> getSalePostList(Product product, String postTitle, String postContent, String isOnSale) {
         List<Post> posts = jpaQueryFactory
-                .select(post)
-                .from(post)
+                .selectFrom(post)
                 .where(eqProduct(product), containPostTitle(postTitle), containsPostContent(postContent), isOnSale(isOnSale))
                 .fetch();
 

@@ -51,25 +51,13 @@ public class ProductController {
     }
     @GetMapping("/img")
     public ResponseEntity<Resource> image(@RequestParam String name){
-        String os = System.getProperty("os.name").toLowerCase();
-        String imgPath = "";
-
-        if(os.contains("win"))
-            imgPath = "c:/capstone/resource/product/img/" + name;
-        else if(os.contains("linux"))
-            imgPath = "/capstone/resource/product/img/" + name;
-
-        Resource resource = new FileSystemResource(imgPath);
-
-        if(!resource.exists()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        Resource resource = productService.getProductImage(name);
 
         HttpHeaders headers = new HttpHeaders();
         Path path = null;
 
         try{
-            path = Paths.get(imgPath);
+            path = Paths.get(resource.getURI());
             headers.add("Content-Type", Files.probeContentType(path));
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -7,10 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,11 +33,11 @@ public class Post {
 
     @Column(name = "post_created_time")
     @CreationTimestamp
-    private Timestamp postCreatedTime;
+    private LocalDateTime postCreatedTime;
 
     @Column(name = "post_updated_time")
     @UpdateTimestamp
-    private Timestamp postUpdatedTime;
+    private LocalDateTime postUpdatedTime;
 
     @Column(name = "price")
     private int price;
@@ -47,7 +49,7 @@ public class Post {
     @JoinColumn(name = "market_id")
     private Market market;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostImage> postImages;
 
     @ManyToOne

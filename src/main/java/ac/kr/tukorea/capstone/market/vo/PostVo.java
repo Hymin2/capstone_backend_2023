@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -16,6 +17,7 @@ public class PostVo {
     private long id;
     private String postTitle;
     private String postContent;
-    private Timestamp createdTime;
-    private String postImages;
-}e
+    private String isOnSale;
+    private LocalDateTime createdTime;
+    private List<String> postImages;
+}

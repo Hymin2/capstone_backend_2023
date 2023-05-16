@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.product.service;
 
+import ac.kr.tukorea.capstone.config.util.ImageComponent;
 import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.entity.UsedProductPrice;
@@ -16,6 +17,8 @@ import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +35,7 @@ public class ProductService {
     private final ProductRepositoryImpl productRepositoryImpl;
     private final ProductRepository productRepository;
     private final UsedProductPriceRepository usedProductPriceRepository;
+    private final ImageComponent imageComponent;
 
     @Transactional
     public ProductListDto getProductList(long categoryId, String filter, String name){
@@ -80,5 +84,18 @@ public class ProductService {
                 .collect(Collectors.toList());
 
         return productFilterDetails;
+    }
+
+    @Transactional
+    public Resource getProductImage(String name){
+        String imgPath = "";
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if(os.contains("win"))
+            imgPath = "c:/capstone/resource/product/img/" + name;
+        else if(os.contains("linux"))
+            imgPath = "/capstone/resource/product/img/" + name;
+
+        return imageComponent.getImage(imgPath);
     }
 }

@@ -5,6 +5,7 @@ import ac.kr.tukorea.capstone.market.dto.MarketDto;
 import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
 import ac.kr.tukorea.capstone.market.dto.PostRegisterDto;
 import ac.kr.tukorea.capstone.market.service.MarketService;
+import ac.kr.tukorea.capstone.market.vo.PostVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,14 +79,10 @@ public class MarketController {
                                                        @RequestParam String postTitle,
                                                        @RequestParam String postContent,
                                                        @RequestParam String isOnSale){
-        marketService.getSalePostList(productId, postTitle, postContent, isOnSale);
-        return null;
-    }
+        List<PostVo> postVos = marketService.getSalePostList(productId, postTitle, postContent, isOnSale);
+        messageForm = new MessageForm(200, postVos, "success");
 
-    /*
-    @GetMapping("/post/{id}")
-    public ResponseEntity<MessageForm> getSalePostDetails(@PathVariable(name = "id") Long postId){
-
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
 
     @PutMapping("/post/{id}")
@@ -94,10 +91,13 @@ public class MarketController {
     }
 
     @DeleteMapping("/post/{id}")
-    public ResponseEntity<MessageForm> deletePost(@PathVariable(name = "id") Long postId){
+    public ResponseEntity deletePost(@PathVariable(name = "id") Long postId){
+        marketService.deletePost(postId);
 
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    /*
     @PostMapping("/want")
     public ResponseEntity<MessageForm> createWantMarket(){
 

@@ -1,6 +1,7 @@
 package ac.kr.tukorea.capstone.market.repository;
 
 import ac.kr.tukorea.capstone.market.entity.Post;
+import ac.kr.tukorea.capstone.market.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
 
 import java.util.List;
