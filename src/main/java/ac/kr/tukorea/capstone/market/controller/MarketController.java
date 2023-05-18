@@ -1,9 +1,7 @@
 package ac.kr.tukorea.capstone.market.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.market.dto.MarketDto;
-import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
-import ac.kr.tukorea.capstone.market.dto.PostRegisterDto;
+import ac.kr.tukorea.capstone.market.dto.*;
 import ac.kr.tukorea.capstone.market.service.MarketService;
 import ac.kr.tukorea.capstone.market.vo.PostVo;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +84,9 @@ public class MarketController {
     }
 
     @PutMapping("/post/{id}")
-    public ResponseEntity<MessageForm> updatePostDetails(@PathVariable(name = "id") Long postId){
+    public ResponseEntity<MessageForm> updatePostDetails(@PathVariable(name = "id") Long postId,
+                                                         @RequestParam List<MultipartFile> multipartFiles,
+                                                         @RequestBody PostUpdateDto postUpdateDto) {
 
     }
 
@@ -97,26 +97,26 @@ public class MarketController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    /*
+
     @PostMapping("/want")
-    public ResponseEntity<MessageForm> createWantMarket(){
+    public ResponseEntity<MessageForm> registerFollowMarket(@RequestBody FollowMarketRegisterDto followMarketRegisterDto){
+        marketService.registerFollowMarket(followMarketRegisterDto);
 
     }
 
-    @DeleteMapping("/want/{marketName}")
-    public ResponseEntity<MessageForm> deleteWantMarket(){
+    @DeleteMapping("/want/{followId}")
+    public ResponseEntity<MessageForm> deleteWantMarket(@PathVariable Long followId){
+        marketService.deleteFollowMarket(followId);
 
     }
 
     @PostMapping("/post/want")
-    public ResponseEntity<MessageForm> createWantPost(){
+    public ResponseEntity<MessageForm> registerWantPost(){
 
     }
 
-    @DeleteMapping("/post/want/{postId")
-    public ResponseEntity<MessageForm> deleteWantPost(){
+    @DeleteMapping("/post/want/{postId}")
+    public ResponseEntity<MessageForm> deleteWantPost(@PathVariable long postId){
 
     }
-
-     */
 }

@@ -2,16 +2,15 @@ package ac.kr.tukorea.capstone.market.service;
 
 import ac.kr.tukorea.capstone.config.Exception.*;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
+import ac.kr.tukorea.capstone.market.dto.FollowMarketRegisterDto;
 import ac.kr.tukorea.capstone.market.dto.MarketDto;
 import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
 import ac.kr.tukorea.capstone.market.dto.PostRegisterDto;
+import ac.kr.tukorea.capstone.market.entity.FollowMarket;
 import ac.kr.tukorea.capstone.market.entity.Market;
 import ac.kr.tukorea.capstone.market.entity.Post;
 import ac.kr.tukorea.capstone.market.entity.PostImage;
-import ac.kr.tukorea.capstone.market.repository.MarketRepository;
-import ac.kr.tukorea.capstone.market.repository.PostImageRepository;
-import ac.kr.tukorea.capstone.market.repository.PostRepository;
-import ac.kr.tukorea.capstone.market.repository.PostRepositoryImpl;
+import ac.kr.tukorea.capstone.market.repository.*;
 import ac.kr.tukorea.capstone.market.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.repository.ProductRepository;
@@ -41,6 +40,7 @@ public class MarketService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
+    private final FollowMarketRepository followMarketRepository;
     private final ImageComponent imageComponent;
 
     @Transactional
@@ -182,4 +182,19 @@ public class MarketService {
     public void deletePost(Long postId){
         postRepository.deleteById(postId);
     }
+
+    public void registerFollowMarket(FollowMarketRegisterDto followMarketRegisterDto){
+        Market market = marketRepository.findById(followMarketRegisterDto.getMarketId()).get();
+        User user = userRepository.findById(followMarketRegisterDto.getUserId()).get();
+
+        FollowMarket followMarket = FollowMarket
+                .builder()
+                .market(market)
+                .user(user)
+                .build();
+
+        followMarketRepository.save(followMarket);
+    }
+
+    public void deleteFollowMarket(Long followId){ followMarketRepository.deleteById(followId); }
 }
