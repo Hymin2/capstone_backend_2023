@@ -98,25 +98,43 @@ public class MarketController {
     }
 
 
-    @PostMapping("/want")
+    @PostMapping("/follow")
     public ResponseEntity<MessageForm> registerFollowMarket(@RequestBody FollowMarketRegisterDto followMarketRegisterDto){
         marketService.registerFollowMarket(followMarketRegisterDto);
+        messageForm = new MessageForm(201, "Following market is success", "success");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
+
+    @GetMapping("/follow")
+    public ResponseEntity<MessageForm> getFollowMarketList(@RequestParam String username){
 
     }
 
-    @DeleteMapping("/want/{followId}")
-    public ResponseEntity<MessageForm> deleteWantMarket(@PathVariable Long followId){
+    @DeleteMapping("/follow/{followId}")
+    public ResponseEntity deleteWantMarket(@PathVariable Long followId){
         marketService.deleteFollowMarket(followId);
 
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping("/post/want")
-    public ResponseEntity<MessageForm> registerWantPost(){
+    public ResponseEntity<MessageForm> registerWantPost(@RequestBody WantPostRegisterDto wantPostRegisterDto){
+        marketService.registerWantPost(wantPostRegisterDto);
+        messageForm = new MessageForm(201, "Wanted post register is success", "success");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
+
+    @GetMapping("/post/want")
+    public ResponseEntity<MessageForm> getWantPostList(@RequestParam String username){
 
     }
 
-    @DeleteMapping("/post/want/{postId}")
-    public ResponseEntity<MessageForm> deleteWantPost(@PathVariable long postId){
+    @DeleteMapping("/post/want/{wantId}")
+    public ResponseEntity<MessageForm> deleteWantPost(@PathVariable long wantId){
+        marketService.deleteWantPost(wantId);
 
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

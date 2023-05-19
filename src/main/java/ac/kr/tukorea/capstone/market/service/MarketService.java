@@ -2,14 +2,8 @@ package ac.kr.tukorea.capstone.market.service;
 
 import ac.kr.tukorea.capstone.config.Exception.*;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
-import ac.kr.tukorea.capstone.market.dto.FollowMarketRegisterDto;
-import ac.kr.tukorea.capstone.market.dto.MarketDto;
-import ac.kr.tukorea.capstone.market.dto.MarketRegisterDto;
-import ac.kr.tukorea.capstone.market.dto.PostRegisterDto;
-import ac.kr.tukorea.capstone.market.entity.FollowMarket;
-import ac.kr.tukorea.capstone.market.entity.Market;
-import ac.kr.tukorea.capstone.market.entity.Post;
-import ac.kr.tukorea.capstone.market.entity.PostImage;
+import ac.kr.tukorea.capstone.market.dto.*;
+import ac.kr.tukorea.capstone.market.entity.*;
 import ac.kr.tukorea.capstone.market.repository.*;
 import ac.kr.tukorea.capstone.market.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
@@ -37,10 +31,13 @@ public class MarketService {
     private final PostRepository postRepository;
     private final PostRepositoryImpl postRepositoryImpl;
     private final PostImageRepository postImageRepository;
+    private final WantPostRepository wantPostRepository;
+    private final WantPostRepositoryCustom wantPostRepositoryCustom;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AuthorityRepository authorityRepository;
     private final FollowMarketRepository followMarketRepository;
+    private final FollowMarketRepositoryCustom followMarketRepositoryCustom;
     private final ImageComponent imageComponent;
 
     @Transactional
@@ -184,8 +181,8 @@ public class MarketService {
     }
 
     public void registerFollowMarket(FollowMarketRegisterDto followMarketRegisterDto){
-        Market market = marketRepository.findById(followMarketRegisterDto.getMarketId()).get();
-        User user = userRepository.findById(followMarketRegisterDto.getUserId()).get();
+        Market market = marketRepository.findById(followMarketRegisterDto.getMarketId()).orElseThrow(() -> new MarketnameNotFoundException());
+        User user = userRepository.findById(followMarketRegisterDto.getUserId()).orElseThrow(() -> new UsernameNotFoundException());
 
         FollowMarket followMarket = FollowMarket
                 .builder()
@@ -196,5 +193,44 @@ public class MarketService {
         followMarketRepository.save(followMarket);
     }
 
-    public void deleteFollowMarket(Long followId){ followMarketRepository.deleteById(followId); }
+    public void getFollowMarketList(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
+
+        List<Market> markets = followMarketRepositoryCustom.getFollowMarketList(user);
+    }
+
+    public void deleteFollowMarket(Long followId){
+        try {
+            followMarketRepository.deleteById(followId);
+        } catch (RuntimeException e){
+            throw new FollowNotFoundException();
+        }
+    }
+
+    public void registerWantPost(WantPostRegisterDto wantPostRegisterDto){
+        Post post = postRepository.findById(wantPostRegisterDto.getPostId()).orElseThrow(() -> new PostNotFoundException());
+        User user = userRepository.findByUsername(wantPostRegisterDto.getUserName()).orElseThrow(() -> new UsernameNotFoundException());
+
+        WantPost wantPost = WantPost
+                .builder()
+                .post(post)
+                .user(user)
+                .build();
+
+        wantPostRepository.save(wantPost);
+    }
+
+    public void getWantPostList(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
+
+        List<Post> posts = wantPostRepositoryCustom.getWantPostList(user);
+    }
+
+    public void deleteWantPost(long wantId){
+        try {
+            wantPostRepository.deleteById(wantId);
+        } catch (RuntimeException e){
+            throw new WantNotFoundException();
+        }
+    }
 }
