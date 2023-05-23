@@ -46,6 +46,7 @@ public class ProductService {
         for(ProductVo productVo : products){
             int sum = 0;
             int cnt = 0;
+
             for(int i = 0; i < usedProductPrices.size(); i++){
                 if(productVo.getId() == usedProductPrices.get(i).getProduct().getId()) {
                     sum += usedProductPrices.get(i).getPrice();
@@ -54,6 +55,8 @@ public class ProductService {
             }
             if(cnt == 0) productVo.setAveragePrice(0);
             else  productVo.setAveragePrice(sum / cnt);
+
+            productVo.setTransactionNum(cnt);
         }
 
         ProductListDto productListDto = new ProductListDto(categoryId, category.getCategoryName() , products);

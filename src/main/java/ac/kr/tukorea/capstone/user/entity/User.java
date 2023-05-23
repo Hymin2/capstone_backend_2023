@@ -1,6 +1,6 @@
 package ac.kr.tukorea.capstone.user.entity;
 
-import ac.kr.tukorea.capstone.market.entity.Market;
+import ac.kr.tukorea.capstone.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +36,15 @@ public class User {
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
+    @Column(name = "image_size")
+    private long imageSize;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Post> posts;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
 
@@ -43,4 +52,6 @@ public class User {
         this.userPassword = password;
     }
     public void setAuthorities(List<Authority> authorities){this.authorities = authorities;}
+    public void setImagePath(String imagePath){ this.imagePath = imagePath; }
+    public void setImageSize(long imageSize) {this.imageSize = imageSize; }
 }

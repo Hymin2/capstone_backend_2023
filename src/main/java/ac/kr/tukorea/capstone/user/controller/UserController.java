@@ -3,8 +3,7 @@ package ac.kr.tukorea.capstone.user.controller;
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
-import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
+import ac.kr.tukorea.capstone.user.dto.*;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ public class UserController {
     public ResponseEntity<MessageForm> register(@RequestBody UserRegisterDto userRegisterDto){
 
         try {
-            User user = userService.registerUser(userRegisterDto);
+            userService.registerUser(userRegisterDto);
 
             messageForm.setMessageForm(201, "Registration success", "success");
             return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
@@ -64,6 +64,46 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
         }
 
+    }
+
+    @PostMapping(value = "{username}")
+    public ResponseEntity<MessageForm> uploadMarketProfileImage(@PathVariable String username,
+                                                                @RequestParam MultipartFile multipartFile){
+        userService.uploadImage(multipartFile, username);
+        messageForm = new MessageForm(201, "Uploading profile image is success", "success");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
+
+    @GetMapping(value = "{username}")
+    public ResponseEntity<MessageForm> getUserInfo(@PathVariable String username){
+        UserInfoDto userInfoDto = userService.getUserInfo(username);
+        messageForm = new MessageForm(200, userInfoDto, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @PostMapping(value = "/follow")
+    public ResponseEntity<MessageForm> registerFollow(@RequestBody FollowRegisterDto followRegisterDto){
+        userService.registerFollow(followRegisterDto);
+        messageForm = new MessageForm(200, "Registration follow is success", "success");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
+
+    @GetMapping(value = "/follow")
+    public ResponseEntity<MessageForm> getFollowList(@RequestParam String username){
+        FollowListDto followList = userService.getFollowList(username);
+        messageForm = new MessageForm(200, followList, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @DeleteMapping(value = "/follow/{followId}")
+    public ResponseEntity deleteFollow(@PathVariable long followId){
+        userService.deleteFollow(followId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @GetMapping(value = "/refresh")
