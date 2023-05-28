@@ -50,10 +50,10 @@ public class GlobalExceptionHandler {
         [Exception] Market의 이름이 중복일 때
         409 error
      */
-    @ExceptionHandler(DuplicateMarketNameException.class)
+    @ExceptionHandler(DuplicateNickNameException.class)
     public ResponseEntity<MessageForm> handleDuplicateMarketNameException() {
-        log.info("Market의 이름이 중복");
-        MessageForm messageForm = new MessageForm(409, "Duplicate market name", "failed");
+        log.info("닉네임이 중복");
+        MessageForm messageForm = new MessageForm(409, "Duplicate nickname", "failed");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
     }
 

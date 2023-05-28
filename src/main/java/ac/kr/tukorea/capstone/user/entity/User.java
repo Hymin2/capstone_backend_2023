@@ -54,4 +54,5 @@ public class User {
     public void setAuthorities(List<Authority> authorities){this.authorities = authorities;}
     public void setImagePath(String imagePath){ this.imagePath = imagePath; }
     public void setImageSize(long imageSize) {this.imageSize = imageSize; }
+    public void setNickname(String nickname){ this.nickname = nickname; }
 }

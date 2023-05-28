@@ -24,7 +24,7 @@ public class ImageComponent {
     }
 
     public String uploadImage(MultipartFile multipartFile, String imgPath){
-        if(!multipartFile.isEmpty())
+        if(multipartFile.isEmpty())
             throw new FileIsEmptyException();
 
         if(!multipartFile.getContentType().startsWith("image"))

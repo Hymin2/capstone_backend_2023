@@ -15,9 +15,10 @@ import java.util.List;
 public class UserInfoDto {
     private long userId;
     private String username;
+    private String nickname;
     private String image;
     private int soldOut;
     private int onSale;
     private int followNum;
-    private List<PostVo> posts;
+    private int followingNum;
 }

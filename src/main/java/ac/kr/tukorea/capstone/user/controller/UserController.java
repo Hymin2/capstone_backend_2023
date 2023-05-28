@@ -1,13 +1,13 @@
 package ac.kr.tukorea.capstone.user.controller;
 
-import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.dto.*;
-import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping(value = "/api/v1/user")
@@ -66,9 +69,18 @@ public class UserController {
 
     }
 
+    @PutMapping(value = "{username}")
+    public ResponseEntity<MessageForm> updateNickname(@PathVariable String username,
+                                                      @RequestBody String nickname){
+        userService.updateNickname(username, nickname.replace("\"", ""));
+        messageForm = new MessageForm(201, "Updating nickname is success", "success");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
+
     @PostMapping(value = "{username}")
-    public ResponseEntity<MessageForm> uploadMarketProfileImage(@PathVariable String username,
-                                                                @RequestParam MultipartFile multipartFile){
+    public ResponseEntity<MessageForm> uploadProfileImage(@PathVariable String username,
+                                                          @RequestParam MultipartFile multipartFile){
         userService.uploadImage(multipartFile, username);
         messageForm = new MessageForm(201, "Uploading profile image is success", "success");
 
@@ -104,6 +116,23 @@ public class UserController {
         userService.deleteFollow(followId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/img")
+    public ResponseEntity<Resource> image(@RequestParam String name){
+        Resource resource = userService.getUserImage(name);
+
+        HttpHeaders headers = new HttpHeaders();
+        Path path = null;
+
+        try{
+            path = Paths.get(resource.getURI());
+            headers.add("Content-Type", Files.probeContentType(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new ResponseEntity(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping(value = "/refresh")
