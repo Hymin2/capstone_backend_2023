@@ -15,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class PostImage {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "image_path")
@@ -23,7 +24,7 @@ public class PostImage {
     @Column(name = "image_size")
     private long imageSize;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 }

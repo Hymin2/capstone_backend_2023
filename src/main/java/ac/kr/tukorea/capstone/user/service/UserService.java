@@ -20,7 +20,7 @@ import ac.kr.tukorea.capstone.user.mapper.UserMapper;
 import ac.kr.tukorea.capstone.user.repository.FollowRepository;
 import ac.kr.tukorea.capstone.user.repository.FollowRepositoryCustom;
 import ac.kr.tukorea.capstone.user.repository.UserRepository;
-import ac.kr.tukorea.capstone.user.vo.FollowVo;
+import ac.kr.tukorea.capstone.user.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,7 @@ public class UserService {
 
         imgPath = imageComponent.uploadImage(multipartFile, imgPath);
 
-        user.setImagePath("http://localhost:8080/api/v1/user/img?name=" + imgPath);
+        user.setImagePath(imgPath);
         user.setImageSize(multipartFile.getSize());
     }
 
@@ -79,23 +79,15 @@ public class UserService {
     public UserInfoDto getUserInfo(String username){
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
         List<Post> posts = postRepository.findByUser(user);
-        List<PostVo> postVos = new ArrayList<>();
 
         int followNum = followRepository.countByFollowedUser(user);
         int followingNum = followRepository.countByFollowingUser(user);
         int onSales = 0, soldOut = 0;
 
-        /*
         for(Post post : posts){
-            List<PostImage> postImage = postImageRepository.findByPost(post);
-            List<String> imagePaths = postImage.stream().map(PostImage::getImagePath).collect(Collectors.toList());
-
-            postVos.add(new PostVo(post.getId(), user.getNickname(), user.getImagePath(), post.getPostTitle(), post.getPostContent(), post.getIsOnSales(), post.getPostCreatedTime() ,imagePaths));
-
             if(post.getIsOnSales().equals("Y")) onSales++;
             else soldOut++;
         }
-         */
 
         return new UserInfoDto(user.getId(), username, user.getNickname(), user.getImagePath(), soldOut, onSales, followNum, followingNum);
     }
@@ -116,7 +108,7 @@ public class UserService {
     @Transactional
     public FollowListDto getFollowList(String username){
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<FollowVo> follows = followRepositoryCustom.getFollowList(user);
+        List<UserVo> follows = followRepositoryCustom.getFollowList(user);
 
         FollowListDto followList = new FollowListDto(user.getId(), user.getUsername(), follows);
 

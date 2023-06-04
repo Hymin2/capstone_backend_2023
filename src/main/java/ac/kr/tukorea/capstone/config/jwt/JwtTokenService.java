@@ -36,7 +36,7 @@ public class JwtTokenService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private final long ACCESS_VALID_SECOND = 1000L * 60 * 30;
+    private final long ACCESS_VALID_SECOND = 1000L * 60 * 60 * 24 * 30;
     private final UserDetailsImplService userDetailsImplService;
     private final JwtRefreshTokenRepository jwtRefreshTokenRepository;
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());

@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "want_post_list")
+@Table(name = "like_post_table")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Builder
-public class WantPost {
+public class LikePost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

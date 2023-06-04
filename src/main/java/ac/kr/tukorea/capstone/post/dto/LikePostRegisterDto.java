@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WantPostRegisterDto {
+public class LikePostRegisterDto {
     private long postId;
-    private String userName;
+    private String username;
 }

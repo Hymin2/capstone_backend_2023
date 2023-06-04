@@ -1,6 +1,6 @@
 package ac.kr.tukorea.capstone.user.dto;
 
-import ac.kr.tukorea.capstone.user.vo.FollowVo;
+import ac.kr.tukorea.capstone.user.vo.UserVo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +15,6 @@ import java.util.List;
 public class FollowListDto {
     private long id;
     private String username;
-    private List<FollowVo> follows;
+    private List<UserVo> follows;
 
 }

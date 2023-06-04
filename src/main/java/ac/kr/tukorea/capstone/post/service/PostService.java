@@ -11,12 +11,14 @@ import ac.kr.tukorea.capstone.product.repository.ProductRepository;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,8 +27,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostRepositoryImpl postRepositoryImpl;
     private final PostImageRepository postImageRepository;
-    private final WantPostRepository wantPostRepository;
-    private final WantPostRepositoryCustom wantPostRepositoryCustom;
+    private final LikePostRepository likePostRepository;
+    private final LikePostRepositoryCustom likePostRepositoryCustom;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ImageComponent imageComponent;
@@ -34,7 +36,7 @@ public class PostService {
     @Transactional
     public void registerPost(PostRegisterDto postRegisterDto, List<MultipartFile> multipartFiles){
         Product product = productRepository.findById(postRegisterDto.getProductId()).get();
-        User user = userRepository.findByUsername(postRegisterDto.getUserName()).orElseThrow(() -> new UsernameNotFoundException());
+        User user = userRepository.findByUsername(postRegisterDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
         List<PostImage> postImages = new ArrayList<>();
 
         Post post = Post.builder()
@@ -44,6 +46,7 @@ public class PostService {
                 .isOnSales("Y")
                 .product(product)
                 .postImages(postImages)
+                .price(postRegisterDto.getPrice())
                 .build();
 
         for(MultipartFile multipartFile : multipartFiles){
@@ -71,14 +74,11 @@ public class PostService {
 
 
     @Transactional
-    public List<PostVo> getSalePostList(long productId, String postTitle, String postContent, String isOnSale){
-        Product product = productRepository.findById(productId).get();
-        List<PostVo> posts = postRepositoryImpl.getSearchedPostList(product, postTitle, postContent, isOnSale);
+    public List<PostVo> getSalePostList(Optional<Long> productId, String username, String postTitle, String postContent, String isOnSale){
+        Product product = null;
+        if(!productId.isEmpty()) product = productRepository.findById(productId.get()).get();
 
-        for(PostVo post : posts){
-            List<PostImage> postImages = postImageRepository.findByPost_Id(post.getId());
-            post.setPostImages(postImages.stream().map(PostImage::getImagePath).collect(Collectors.toList()));
-        }
+        List<PostVo> posts = postRepositoryImpl.getSearchedPostList(product, username, postTitle, postContent, isOnSale);
 
         return posts;
     }
@@ -89,36 +89,46 @@ public class PostService {
     }
 
 
-    public void registerWantPost(WantPostRegisterDto wantPostRegisterDto){
-        Post post = postRepository.findById(wantPostRegisterDto.getPostId()).orElseThrow(() -> new PostNotFoundException());
-        User user = userRepository.findByUsername(wantPostRegisterDto.getUserName()).orElseThrow(() -> new UsernameNotFoundException());
+    public void registerLikePost(LikePostRegisterDto likePostRegisterDto){
+        Post post = postRepository.findById(likePostRegisterDto.getPostId()).orElseThrow(() -> new PostNotFoundException());
+        User user = userRepository.findByUsername(likePostRegisterDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
 
-        WantPost wantPost = WantPost
+        LikePost likePost = LikePost
                 .builder()
                 .post(post)
                 .user(user)
                 .build();
 
-        wantPostRepository.save(wantPost);
+        likePostRepository.save(likePost);
     }
 
-    public List<PostVo> getWantPostList(String username){
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<PostVo> posts = wantPostRepositoryCustom.getWantPostList(user);
-
-        for(PostVo post : posts){
-            List<PostImage> postImages = postImageRepository.findByPost_Id(post.getId());
-            post.setPostImages(postImages.stream().map(PostImage::getImagePath).collect(Collectors.toList()));
-        }
+    public List<PostVo> getLikePostList(String username){
+        List<PostVo> posts = likePostRepositoryCustom.getLikePostList(username);
 
         return posts;
     }
 
-    public void deleteWantPost(long wantId){
+    @Transactional
+    public void deleteLikePost(long postId, String username){
         try {
-            wantPostRepository.deleteById(wantId);
+            User user = userRepository.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
+            likePostRepositoryCustom.deleteLikePost(postId, user);
         } catch (RuntimeException e){
+            System.out.println(e.getCause());
             throw new WantNotFoundException();
         }
+    }
+
+    @Transactional
+    public Resource getPostImage(String name) {
+        String imgPath = "";
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if(os.contains("win"))
+            imgPath = "c:/capstone/resource/user/post/img/" + name;
+        else if(os.contains("linux"))
+            imgPath = "/capstone/resource/user/post/img/" + name;
+
+        return imageComponent.getImage(imgPath);
     }
 }
