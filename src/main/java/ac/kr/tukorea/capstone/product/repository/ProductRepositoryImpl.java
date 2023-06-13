@@ -1,11 +1,8 @@
 package ac.kr.tukorea.capstone.product.repository;
 
-import ac.kr.tukorea.capstone.config.util.ProductFilter;
-import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
-import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
-import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
-import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import ac.kr.tukorea.capstone.product.entity.*;
+import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
+import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -13,10 +10,11 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
 
 import java.util.List;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 @Repository
 @RequiredArgsConstructor
@@ -93,6 +91,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         return products;
     }
 
+    @Override
     public List<UsedProductPriceVo> getUsedProductPriceList(Product product){
         List<UsedProductPriceVo> productPrices = jpaQueryFactory
                 .select(Projections.bean(UsedProductPriceVo.class, usedProductPrice.time.as("time"), usedProductPrice.price.avg().intValue().as("price")))

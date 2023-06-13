@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "used_product_price_table")

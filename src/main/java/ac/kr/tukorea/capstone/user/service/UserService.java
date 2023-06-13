@@ -5,10 +5,8 @@ import ac.kr.tukorea.capstone.config.Exception.UsernameNotFoundException;
 import ac.kr.tukorea.capstone.config.WebSecurityConfig;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
 import ac.kr.tukorea.capstone.post.entity.Post;
-import ac.kr.tukorea.capstone.post.entity.PostImage;
 import ac.kr.tukorea.capstone.post.repository.PostImageRepository;
 import ac.kr.tukorea.capstone.post.repository.PostRepository;
-import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.user.dto.FollowListDto;
 import ac.kr.tukorea.capstone.user.dto.FollowRegisterDto;
 import ac.kr.tukorea.capstone.user.dto.UserInfoDto;
@@ -27,10 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

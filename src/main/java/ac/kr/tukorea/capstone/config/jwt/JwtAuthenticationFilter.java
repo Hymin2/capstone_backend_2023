@@ -1,12 +1,10 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
-import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import netscape.javascript.JSObject;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

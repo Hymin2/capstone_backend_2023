@@ -1,10 +1,8 @@
 package ac.kr.tukorea.capstone.user.mapper;
 
-import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component

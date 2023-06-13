@@ -1,18 +1,12 @@
 package ac.kr.tukorea.capstone.post.repository;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import ac.kr.tukorea.capstone.post.entity.Post;
 import ac.kr.tukorea.capstone.post.entity.QLikePost;
 import ac.kr.tukorea.capstone.post.entity.QPost;
 import ac.kr.tukorea.capstone.post.entity.QPostImage;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.entity.QProduct;
-import ac.kr.tukorea.capstone.product.entity.QUsedProductPrice;
 import ac.kr.tukorea.capstone.user.entity.QUser;
-import ac.kr.tukorea.capstone.user.entity.User;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -20,6 +14,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 @RequiredArgsConstructor
 public class PostRepositoryImpl implements PostRepositoryCustom{

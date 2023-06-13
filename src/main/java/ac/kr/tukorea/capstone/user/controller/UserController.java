@@ -2,7 +2,10 @@ package ac.kr.tukorea.capstone.user.controller;
 
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.user.dto.*;
+import ac.kr.tukorea.capstone.user.dto.FollowListDto;
+import ac.kr.tukorea.capstone.user.dto.FollowRegisterDto;
+import ac.kr.tukorea.capstone.user.dto.UserInfoDto;
+import ac.kr.tukorea.capstone.user.dto.UserRegisterDto;
 import ac.kr.tukorea.capstone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;

@@ -1,7 +1,9 @@
 package ac.kr.tukorea.capstone.post.controller;
 
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.post.dto.*;
+import ac.kr.tukorea.capstone.post.dto.LikePostRegisterDto;
+import ac.kr.tukorea.capstone.post.dto.PostRegisterDto;
+import ac.kr.tukorea.capstone.post.dto.PostUpdateDto;
 import ac.kr.tukorea.capstone.post.service.PostService;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
 import lombok.RequiredArgsConstructor;

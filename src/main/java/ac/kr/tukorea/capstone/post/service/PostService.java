@@ -1,9 +1,14 @@
 package ac.kr.tukorea.capstone.post.service;
 
-import ac.kr.tukorea.capstone.config.Exception.*;
+import ac.kr.tukorea.capstone.config.Exception.PostNotFoundException;
+import ac.kr.tukorea.capstone.config.Exception.UsernameNotFoundException;
+import ac.kr.tukorea.capstone.config.Exception.WantNotFoundException;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
-import ac.kr.tukorea.capstone.post.dto.*;
-import ac.kr.tukorea.capstone.post.entity.*;
+import ac.kr.tukorea.capstone.post.dto.LikePostRegisterDto;
+import ac.kr.tukorea.capstone.post.dto.PostRegisterDto;
+import ac.kr.tukorea.capstone.post.entity.LikePost;
+import ac.kr.tukorea.capstone.post.entity.Post;
+import ac.kr.tukorea.capstone.post.entity.PostImage;
 import ac.kr.tukorea.capstone.post.repository.*;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
@@ -19,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

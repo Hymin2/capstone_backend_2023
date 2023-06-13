@@ -7,7 +7,6 @@ import ac.kr.tukorea.capstone.config.Exception.InvalidRefreshTokenException;
 import ac.kr.tukorea.capstone.config.Exception.RefreshTokenExpiredException;
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImplService;
-import ac.kr.tukorea.capstone.user.entity.Authority;
 import ac.kr.tukorea.capstone.user.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.lang.Strings;
@@ -26,9 +25,10 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component

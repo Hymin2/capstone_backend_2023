@@ -6,9 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Getter
 @AllArgsConstructor
