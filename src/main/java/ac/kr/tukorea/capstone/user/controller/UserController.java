@@ -106,9 +106,17 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
 
-    @GetMapping(value = "/follow")
-    public ResponseEntity<MessageForm> getFollowList(@RequestParam String username){
-        FollowListDto followList = userService.getFollowList(username);
+    @GetMapping(value = "/follow/following")
+    public ResponseEntity<MessageForm> getFollowingList(@RequestParam String username){
+        FollowListDto followList = userService.getFollowingList(username);
+        messageForm = new MessageForm(200, followList, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @GetMapping(value = "/follow/follower")
+    public ResponseEntity<MessageForm> getFollowedList(@RequestParam String username){
+        FollowListDto followList = userService.getFollowerList(username);
         messageForm = new MessageForm(200, followList, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);

@@ -102,14 +102,25 @@ public class UserService {
     }
 
     @Transactional
-    public FollowListDto getFollowList(String username){
+    public FollowListDto getFollowingList(String username){
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<UserVo> follows = followRepositoryCustom.getFollowList(user);
+        List<UserVo> follows = followRepositoryCustom.getFollowingList(user);
 
         FollowListDto followList = new FollowListDto(user.getId(), user.getUsername(), follows);
 
         return followList;
     }
+
+    @Transactional
+    public FollowListDto getFollowerList(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
+        List<UserVo> follows = followRepositoryCustom.getFollowerList(user);
+
+        FollowListDto followList = new FollowListDto(user.getId(), user.getUsername(), follows);
+
+        return followList;
+    }
+
     public void deleteFollow(long followId){ followRepository.deleteById(followId);}
 
     public Boolean isDuplicateId(String username){

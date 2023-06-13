@@ -18,12 +18,25 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<UserVo> getFollowList(User user) {
+    public List<UserVo> getFollowingList(User user) {
         List<UserVo> follows = jpaQueryFactory
                 .select(Projections.bean(UserVo.class, follow.followedUser, this.user.username, this.user.imagePath))
                 .from(follow)
                 .innerJoin(this.user)
                 .on(follow.followingUser.eq(user))
+                .where(this.user.eq(user))
+                .fetch();
+
+        return follows;
+    }
+
+    @Override
+    public List<UserVo> getFollowerList(User user) {
+        List<UserVo> follows = jpaQueryFactory
+                .select(Projections.bean(UserVo.class, follow.followedUser, this.user.username, this.user.imagePath))
+                .from(follow)
+                .innerJoin(this.user)
+                .on(follow.followedUser.eq(user))
                 .where(this.user.eq(user))
                 .fetch();
 
