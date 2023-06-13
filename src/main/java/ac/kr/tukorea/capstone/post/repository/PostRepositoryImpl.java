@@ -73,12 +73,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
     private BooleanExpression containPostTitle(String postTitle){
         if(postTitle == null) return null;
-        return post.postTitle.contains("%" + postTitle + "%");
+        return post.postTitle.contains(postTitle);
     }
 
     private BooleanExpression containsPostContent(String postContent){
         if(postContent == null) return null;
-        return post.postContent.contains("%" + postContent + "%");
+        return post.postContent.contains(postContent);
     }
 
     private BooleanExpression isOnSale(String isOnSale){

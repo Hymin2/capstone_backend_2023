@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.product.service;
 
+import ac.kr.tukorea.capstone.config.Exception.CategoryNotFoundException;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
 import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
@@ -13,12 +14,10 @@ import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.repository.CategoryRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepositoryImpl;
-import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,26 +37,18 @@ public class ProductService {
     private final ImageComponent imageComponent;
 
     @Transactional
+    public ProductListDto getTopProductList(long categoryId){
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        List<ProductVo> products = productRepositoryImpl.getTopProductList(categoryId);
+
+        ProductListDto productListDto = new ProductListDto(categoryId, category.getCategoryName(), products);
+        return productListDto;
+    }
+
+    @Transactional
     public ProductListDto getProductList(long categoryId, String filter, String name){
-        Category category = categoryRepository.findById(categoryId).get();
-        List<ProductVo> products = productRepositoryImpl.findByCategoryAndFilter(category, getFilterList(filter), name);
-        List<UsedProductPrice> usedProductPrices = usedProductPriceRepository.findByTimeBefore(Date.valueOf(LocalDateTime.now().minusMonths(1).toLocalDate()));
-
-        for(ProductVo productVo : products){
-            int sum = 0;
-            int cnt = 0;
-
-            for(int i = 0; i < usedProductPrices.size(); i++){
-                if(productVo.getId() == usedProductPrices.get(i).getProduct().getId()) {
-                    sum += usedProductPrices.get(i).getPrice();
-                    cnt++;
-                }
-            }
-            if(cnt == 0) productVo.setAveragePrice(0);
-            else  productVo.setAveragePrice(sum / cnt);
-
-            productVo.setTransactionNum(cnt);
-        }
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        List<ProductVo> products = productRepositoryImpl.getProductList(categoryId, getFilterList(filter), name);
 
         ProductListDto productListDto = new ProductListDto(categoryId, category.getCategoryName() , products);
 
@@ -69,14 +60,13 @@ public class ProductService {
         Product product = productRepository.findById(productId).get();
         List<UsedProductPriceVo> usedProductPrices = productRepositoryImpl.getUsedProductPriceList(product);
 
-        List<ProductDetailVo> ProductDetails = productRepositoryImpl.findDetailsByProduct(product);
+        List<ProductDetailVo> ProductDetails = productRepositoryImpl.getProductDetailList(product);
 
         ProductDetailsDto productDetailsDto = new ProductDetailsDto(productId, ProductDetails, usedProductPrices);
 
         return productDetailsDto;
     }
 
-    @Transactional
     public List<BooleanExpression> getFilterList(String filter){
         if(filter == null || filter.equals("")) return null;
 
@@ -89,7 +79,6 @@ public class ProductService {
         return productFilterDetails;
     }
 
-    @Transactional
     public Resource getProductImage(String name){
         String imgPath = "";
         String os = System.getProperty("os.name").toLowerCase();

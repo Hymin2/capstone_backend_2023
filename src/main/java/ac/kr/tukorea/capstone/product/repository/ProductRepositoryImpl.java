@@ -13,6 +13,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 import java.util.List;
 
@@ -27,25 +29,33 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final QUsedProductPrice usedProductPrice = QUsedProductPrice.usedProductPrice;
 
     @Override
-    public List<ProductVo> findByCategoryAndFilter(Category category, List<BooleanExpression> productFilters, String name) {
-        List<ProductVo> products = jpaQueryFactory
-                .select(Projections.bean(ProductVo.class, product.id, product.productName, product.modelName, product.companyName, productImage.path))
-                .distinct()
-                .from(product)
+    public List<ProductVo> getProductList(long categoryId, List<BooleanExpression> productFilters, String name) {
+        List<ProductVo> products = jpaQueryFactory.selectFrom(product)
+                .innerJoin(productImage)
+                .on(productImage.product.eq(product))
                 .innerJoin(productDetail)
                 .on(productDetail.product.eq(product))
                 .innerJoin(detail)
                 .on(productDetail.detail.eq(detail))
-                .innerJoin(productImage)
-                .on(productImage.product.eq(product))
-                .where(product.category.eq(category), eqFilter(productFilters), containsName(name))
-                .fetch();
+                .leftJoin(usedProductPrice)
+                .on(usedProductPrice.product.eq(product))
+                .where(product.category.id.eq(categoryId), eqFilter(productFilters), containsName(name))
+                .distinct()
+                .groupBy(product.id, productImage.path)
+                .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
+                        product.id,
+                        product.productName,
+                        product.modelName,
+                        product.companyName,
+                        usedProductPrice.price.avg().intValue().as("averagePrice"),
+                        usedProductPrice.id.count().intValue().as("transactionNum"),
+                        list(Projections.constructor(String.class, productImage.path)))));
 
         return products;
     }
 
     @Override
-    public List<ProductDetailVo> findDetailsByProduct(Product product) {
+    public List<ProductDetailVo> getProductDetailList(Product product) {
         List<ProductDetailVo> productDetails = jpaQueryFactory
                 .select(Projections.bean(ProductDetailVo.class, detail.detailName, detail.detailContent))
                 .from(detail)
@@ -57,6 +67,30 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                 .fetch();
 
         return productDetails;
+    }
+
+    @Override
+    public List<ProductVo> getTopProductList(long categoryId) {
+        List<ProductVo> products = jpaQueryFactory.selectFrom(product)
+                .innerJoin(productImage)
+                .on(productImage.product.eq(product))
+                .innerJoin(usedProductPrice)
+                .on(usedProductPrice.product.eq(product))
+                .where(product.category.id.eq(categoryId))
+                .distinct()
+                .groupBy(product.id, productImage.path)
+                .orderBy(usedProductPrice.id.count().desc())
+                .limit(10)
+                .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
+                        product.id,
+                        product.productName,
+                        product.modelName,
+                        product.companyName,
+                        usedProductPrice.price.avg().intValue().as("averagePrice"),
+                        usedProductPrice.id.count().intValue().as("transactionNum"),
+                        list(Projections.constructor(String.class, productImage.path)))));
+
+        return products;
     }
 
     public List<UsedProductPriceVo> getUsedProductPriceList(Product product){

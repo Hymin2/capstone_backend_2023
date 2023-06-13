@@ -1,8 +1,6 @@
 package ac.kr.tukorea.capstone.product.repository;
 
-import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
-import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import ac.kr.tukorea.capstone.product.entity.Category;
@@ -31,7 +29,7 @@ class ProductRepositoryImplTest {
         Category category = categoryRepository.findById(1L).get();
 
 
-        List<ProductVo> productList = productRepository.findByCategoryAndFilter(category, Arrays.asList(ProductFilterDetail.getFilter("1033")), null);
+        List<ProductVo> productList = productRepository.getProductList(1L, Arrays.asList(ProductFilterDetail.getFilter("1033")), null);
 
         for (ProductVo product : productList){
             System.out.println(product.getProductName() + " " + product.getProductName());
@@ -43,7 +41,7 @@ class ProductRepositoryImplTest {
     public void getProductDetails(){
         Product product = repository.findById(1L).get();
 
-        List<ProductDetailVo> productDetailsDto = productRepository.findDetailsByProduct(product);
+        List<ProductDetailVo> productDetailsDto = productRepository.getProductDetailList(product);
 
         productDetailsDto.stream().forEach((p) -> System.out.println(p.getDetailName() + " " + p.getDetailContent()));
     }

@@ -47,6 +47,16 @@ public class GlobalExceptionHandler {
     }
 
     /*
+        [Exception] Category를 찾을 수 없을 때
+        404 error
+     */
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<MessageForm> handleCategoryNotFoundException(){
+        log.info("category가 존재하지 않음");
+        MessageForm messageForm = new MessageForm(404, "Category is not found", "failed");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(messageForm);
+    }
+    /*
         [Exception] Market의 이름이 중복일 때
         409 error
      */

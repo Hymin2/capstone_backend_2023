@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,7 +16,7 @@ public class ProductVo {
     private String productName;
     private String modelName;
     private String companyName;
-    private String path;
     private int averagePrice;
     private int transactionNum;
+    private List<String> images;
 }

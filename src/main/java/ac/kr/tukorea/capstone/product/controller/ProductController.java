@@ -4,21 +4,19 @@ import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
 import ac.kr.tukorea.capstone.product.service.ProductService;
+import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/product")
@@ -26,9 +24,9 @@ import java.nio.file.Paths;
 public class ProductController {
     private final ProductService productService;
     @GetMapping
-    public ResponseEntity<MessageForm> productList(@RequestParam long category,
-                                                   @RequestParam(required = false) String filter,
-                                                   @RequestParam(required = false) String name){
+    public ResponseEntity<MessageForm> getProductList(@RequestParam long category,
+                                                      @RequestParam(required = false) String filter,
+                                                      @RequestParam(required = false) String name){
 
         ProductListDto productListDto = productService.getProductList(category, filter, name);
 
@@ -38,7 +36,7 @@ public class ProductController {
     }
 
     @GetMapping("/{product}")
-    public ResponseEntity<MessageForm> productDetails(@PathVariable long product){
+    public ResponseEntity<MessageForm> getProductDetails(@PathVariable long product){
         ProductDetailsDto productDetailsDto = productService.getProductDetails(product);
         MessageForm messageForm = new MessageForm();
 
@@ -49,6 +47,15 @@ public class ProductController {
          messageForm.setMessageForm(200, productDetailsDto, "success");
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
+
+    @GetMapping("/top")
+    public ResponseEntity<MessageForm> getTopProduct(@RequestParam long category){
+        ProductListDto products = productService.getTopProductList(category);
+        MessageForm messageForm = new MessageForm(200, products, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
     @GetMapping("/img")
     public ResponseEntity<Resource> image(@RequestParam String name){
         Resource resource = productService.getProductImage(name);
