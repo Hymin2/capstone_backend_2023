@@ -7,6 +7,7 @@ import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -31,13 +32,9 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         List<ProductVo> products = jpaQueryFactory.selectFrom(product)
                 .innerJoin(productImage)
                 .on(productImage.product.eq(product))
-                .innerJoin(productDetail)
-                .on(productDetail.product.eq(product))
-                .innerJoin(detail)
-                .on(productDetail.detail.eq(detail))
                 .leftJoin(usedProductPrice)
                 .on(usedProductPrice.product.eq(product))
-                .where(product.category.id.eq(categoryId), eqFilter(productFilters), containsName(name))
+                .where(product.category.id.eq(categoryId), product.id.in(searchFilters(productFilters)), containsName(name))
                 .distinct()
                 .groupBy(product.id, productImage.path)
                 .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
@@ -103,6 +100,14 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         return productPrices;
     }
 
+    public JPAQuery<Long> searchFilters(List<BooleanExpression> productFilters){
+        return jpaQueryFactory.select(product.id).from(product)
+                .innerJoin(productDetail)
+                .on(productDetail.product.eq(product))
+                .innerJoin(detail)
+                .on(productDetail.detail.eq(detail))
+                .where(eqFilter(productFilters));
+    }
     public BooleanExpression containsName(String name){
         if(name == null || name.equals("")) return null;
 
