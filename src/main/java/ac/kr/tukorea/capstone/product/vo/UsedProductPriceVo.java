@@ -1,5 +1,7 @@
 package ac.kr.tukorea.capstone.product.vo;
 
+import ac.kr.tukorea.capstone.product.entity.UsedProductPrice;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +14,12 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsedProductPriceVo {
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date time;
     private int price;
+
+    public UsedProductPriceVo(Date time){
+        this.time = time;
+        this.price = 0;
+    }
 }

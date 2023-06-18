@@ -50,4 +50,11 @@ class ProductServiceTest {
         System.out.println(filters[0].equals("1001"));
         System.out.println(productFilterDetails.stream().filter( (i) -> i.getCode().equals(filters[0])).findFirst().get().getCode());
     }
+
+    @DisplayName("Date List 생성 테스트")
+    @Test
+    public void getDateList(){
+        productService.getUsedPriceList(68L, 3);
+
+    }
 }

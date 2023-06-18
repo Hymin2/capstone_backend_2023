@@ -50,7 +50,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     }
 
     @Override
-    public List<ProductDetailVo> getProductDetailList(Product product) {
+    public List<ProductDetailVo> getProductDetailList(long productId) {
         List<ProductDetailVo> productDetails = jpaQueryFactory
                 .select(Projections.bean(ProductDetailVo.class, detail.detailName, detail.detailContent))
                 .from(detail)
@@ -58,7 +58,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                 .on(productDetail.detail.eq(detail))
                 .innerJoin(this.product)
                 .on(productDetail.product.eq(this.product))
-                .where(this.product.eq(product))
+                .where(this.product.id.eq(productId))
                 .fetch();
 
         return productDetails;
@@ -89,11 +89,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     }
 
     @Override
-    public List<UsedProductPriceVo> getUsedProductPriceList(Product product){
+    public List<UsedProductPriceVo> getUsedProductPriceList(long productId){
         List<UsedProductPriceVo> productPrices = jpaQueryFactory
                 .select(Projections.bean(UsedProductPriceVo.class, usedProductPrice.time.as("time"), usedProductPrice.price.avg().intValue().as("price")))
                 .from(usedProductPrice)
-                .where(usedProductPrice.product.eq(product))
+                .where(usedProductPrice.product.id.eq(productId))
+                .orderBy(usedProductPrice.time.asc())
                 .groupBy(usedProductPrice.time)
                 .fetch();
 

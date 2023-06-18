@@ -41,7 +41,7 @@ class ProductRepositoryImplTest {
     public void getProductDetails(){
         Product product = repository.findById(1L).get();
 
-        List<ProductDetailVo> productDetailsDto = productRepository.getProductDetailList(product);
+        List<ProductDetailVo> productDetailsDto = productRepository.getProductDetailList(1L);
 
         productDetailsDto.stream().forEach((p) -> System.out.println(p.getDetailName() + " " + p.getDetailContent()));
     }

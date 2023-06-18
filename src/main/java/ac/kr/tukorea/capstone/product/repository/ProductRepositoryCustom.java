@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ProductRepositoryCustom {
     List<ProductVo> getProductList(long categoryId, List<BooleanExpression> productFilters, String name);
-    List<ProductDetailVo> getProductDetailList(Product product);
+    List<ProductDetailVo> getProductDetailList(long productId);
     List<ProductVo> getTopProductList(long categoryId);
-    List<UsedProductPriceVo> getUsedProductPriceList(Product product);
+    List<UsedProductPriceVo> getUsedProductPriceList(long productId);
 }

@@ -5,11 +5,14 @@ import ac.kr.tukorea.capstone.config.util.ImageComponent;
 import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
+import ac.kr.tukorea.capstone.product.dto.UsedProductPriceDto;
 import ac.kr.tukorea.capstone.product.entity.Category;
 import ac.kr.tukorea.capstone.product.entity.Product;
+import ac.kr.tukorea.capstone.product.entity.UsedProductPrice;
 import ac.kr.tukorea.capstone.product.repository.CategoryRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepository;
 import ac.kr.tukorea.capstone.product.repository.ProductRepositoryCustom;
+import ac.kr.tukorea.capstone.product.repository.UsedProductPriceRepository;
 import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import ac.kr.tukorea.capstone.product.vo.ProductVo;
 import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
@@ -19,8 +22,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,7 @@ public class ProductService {
     private final ProductRepositoryCustom productRepositoryCustom;
     private final ProductRepository productRepository;
     private final ImageComponent imageComponent;
+    private final UsedProductPriceRepository usedProductPriceRepository;
 
     @Transactional
     public ProductListDto getTopProductList(long categoryId){
@@ -52,12 +56,9 @@ public class ProductService {
 
     @Transactional
     public ProductDetailsDto getProductDetails(long productId){
-        Product product = productRepository.findById(productId).get();
-        List<UsedProductPriceVo> usedProductPrices = productRepositoryCustom.getUsedProductPriceList(product);
+        List<ProductDetailVo> ProductDetails = productRepositoryCustom.getProductDetailList(productId);
 
-        List<ProductDetailVo> ProductDetails = productRepositoryCustom.getProductDetailList(product);
-
-        ProductDetailsDto productDetailsDto = new ProductDetailsDto(productId, ProductDetails, usedProductPrices);
+        ProductDetailsDto productDetailsDto = new ProductDetailsDto(productId, ProductDetails);
 
         return productDetailsDto;
     }
@@ -84,5 +85,55 @@ public class ProductService {
             imgPath = "/capstone/resource/product/img/" + name;
 
         return imageComponent.getImage(imgPath);
+    }
+
+    public UsedProductPriceDto getUsedPriceList(long product, int month) {
+        List<UsedProductPriceVo> usedProductPrices = productRepositoryCustom.getUsedProductPriceList(product);
+        List<UsedProductPriceVo> usedProductPricesFromMonth = new ArrayList<>();
+
+        Date endDate = new Date();
+        Date startDate = getBeforeMonthDate(endDate, month);
+
+        Date current = startDate;
+
+        while (current.compareTo(endDate) <= 0) {
+            usedProductPricesFromMonth.add(new UsedProductPriceVo(new java.sql.Date(current.getTime())));
+            current = getAfterOneDayDate(current);
+        }
+
+        int i, k = 0;
+
+        for(i = 0; i < usedProductPricesFromMonth.size(); i++){
+            if(i != 0 && k == usedProductPrices.size()){
+                usedProductPricesFromMonth.get(i).setPrice(usedProductPricesFromMonth.get(i - 1).getPrice());
+            }
+
+            for (; k < usedProductPrices.size(); k++) {
+                if(usedProductPricesFromMonth.get(i).getTime().compareTo(usedProductPrices.get(k).getTime()) >= 0)
+                    usedProductPricesFromMonth.get(i).setPrice(usedProductPrices.get(k).getPrice());
+                else break;
+            }
+
+            if(i != 0 && usedProductPricesFromMonth.get(i).getPrice() == 0)
+                usedProductPricesFromMonth.get(i).setPrice(usedProductPricesFromMonth.get(i - 1).getPrice());
+        }
+
+        return new UsedProductPriceDto(product, usedProductPricesFromMonth);
+    }
+
+    public Date getBeforeMonthDate(Date date, int month){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, month * -1);
+
+        return calendar.getTime();
+    }
+
+    public Date getAfterOneDayDate(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, 1);
+
+        return calendar.getTime();
     }
 }

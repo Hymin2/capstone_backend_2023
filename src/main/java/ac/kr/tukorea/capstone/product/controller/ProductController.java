@@ -3,7 +3,9 @@ package ac.kr.tukorea.capstone.product.controller;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
+import ac.kr.tukorea.capstone.product.dto.UsedProductPriceDto;
 import ac.kr.tukorea.capstone.product.service.ProductService;
+import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/product")
@@ -50,6 +53,14 @@ public class ProductController {
     public ResponseEntity<MessageForm> getTopProduct(@RequestParam long category){
         ProductListDto products = productService.getTopProductList(category);
         MessageForm messageForm = new MessageForm(200, products, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @GetMapping("/used-price")
+    public ResponseEntity<MessageForm> getUsedPrice(@RequestParam long product, @RequestParam int month){
+        UsedProductPriceDto usedProductPriceDto = productService.getUsedPriceList(product, month);
+        MessageForm messageForm = new MessageForm(200, usedProductPriceDto, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
