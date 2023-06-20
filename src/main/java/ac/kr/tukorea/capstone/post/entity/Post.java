@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.post.entity;
 
+import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -54,4 +55,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @OneToMany(mappedBy = "post")
+    private List<ChattingRoom> post_id;
 }

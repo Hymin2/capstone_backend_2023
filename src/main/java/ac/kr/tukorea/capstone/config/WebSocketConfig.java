@@ -1,0 +1,15 @@
+package ac.kr.tukorea.capstone.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.*;
+@EnableWebSocket
+@RequiredArgsConstructor
+public class WebSocketConfig implements WebSocketConfigurer {
+    private final WebSocketHandler webSocketHandler;
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        registry.addHandler(webSocketHandler, "ws/chat").setAllowedOrigins("*");
+    }
+
+}

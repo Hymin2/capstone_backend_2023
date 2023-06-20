@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.user.entity;
 
+import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.post.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,12 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ChattingRoom> seller;
+
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ChattingRoom> buyer;
 
     public void setEncodePassword(String password) {
         this.userPassword = password;
