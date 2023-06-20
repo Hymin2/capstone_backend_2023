@@ -49,10 +49,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Authority> authorities;
 
-    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<ChattingRoom> seller;
 
-    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL)
     private List<ChattingRoom> buyer;
 
     public void setEncodePassword(String password) {
