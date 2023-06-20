@@ -91,8 +91,9 @@ public class UserController {
     }
 
     @GetMapping(value = "{username}")
-    public ResponseEntity<MessageForm> getUserInfo(@PathVariable String username){
-        UserInfoDto userInfoDto = userService.getUserInfo(username);
+    public ResponseEntity<MessageForm> getUserInfo(@PathVariable String username,
+                                                   @RequestParam(required = false) String otherUsername){
+        UserInfoDto userInfoDto = userService.getUserInfo(username, otherUsername);
         messageForm = new MessageForm(200, userInfoDto, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
@@ -122,9 +123,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
 
-    @DeleteMapping(value = "/follow/{followId}")
-    public ResponseEntity deleteFollow(@PathVariable long followId){
-        userService.deleteFollow(followId);
+    @DeleteMapping(value = "/follow")
+    public ResponseEntity deleteFollow(@RequestParam String followingUsername, @RequestParam String followerUsername){
+        userService.deleteFollow(followingUsername, followerUsername);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
