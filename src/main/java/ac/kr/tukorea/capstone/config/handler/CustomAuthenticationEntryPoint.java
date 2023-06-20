@@ -19,6 +19,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         log.info("401 error: 인증이 되어있지 않거나 토큰이 유효하지 않음");
+        log.info(authException.getMessage());
+        log.info(authException.getCause().toString());
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
