@@ -39,7 +39,7 @@ public class FollowRepositoryImpl implements FollowRepositoryCustom{
     @Override
     public List<UserVo> getFollowerList(String username) {
         List<UserVo> follows = jpaQueryFactory
-                .select(Projections.bean(UserVo.class, user.id, user.username, user.nickname, user.imagePath))
+                .select(Projections.bean(UserVo.class, user.id, user.username, user.nickname, user.imagePath.as("image")))
                 .from(user)
                 .where(user.id.eq(
                         JPAExpressions
