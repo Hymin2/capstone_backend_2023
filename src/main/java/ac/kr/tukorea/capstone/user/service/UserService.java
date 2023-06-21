@@ -18,6 +18,7 @@ import ac.kr.tukorea.capstone.user.mapper.UserMapper;
 import ac.kr.tukorea.capstone.user.repository.FollowRepository;
 import ac.kr.tukorea.capstone.user.repository.FollowRepositoryCustom;
 import ac.kr.tukorea.capstone.user.repository.UserRepository;
+import ac.kr.tukorea.capstone.user.repository.UserRepositoryCustom;
 import ac.kr.tukorea.capstone.user.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -35,10 +36,9 @@ public class UserService {
     private final WebSecurityConfig webSecurityConfig;
     private final UserMapper userMapper;
     private final ImageComponent imageComponent;
-    private final PostRepository postRepository;
-    private final PostImageRepository postImageRepository;
     private final FollowRepository followRepository;
     private final FollowRepositoryCustom followRepositoryCustom;
+    private final UserRepositoryCustom userRepositoryCustom;
 
     public void registerUser(UserRegisterDto userRegisterDto){
         User user = userMapper.UserRegisterInfo(userRegisterDto);
@@ -72,20 +72,10 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoDto getUserInfo(String username){
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<Post> posts = postRepository.findByUser(user);
+    public UserInfoDto getUserInfo(String username, String otherUsername){
+        UserInfoDto userInfoDto = userRepositoryCustom.getOtherUserInfo(username, otherUsername);
 
-        int followNum = followRepository.countByFollowedUser(user);
-        int followingNum = followRepository.countByFollowingUser(user);
-        int onSales = 0, soldOut = 0;
-
-        for(Post post : posts){
-            if(post.getIsOnSales().equals("Y")) onSales++;
-            else soldOut++;
-        }
-
-        return new UserInfoDto(user.getId(), username, user.getNickname(), user.getImagePath(), soldOut, onSales, followNum, followingNum);
+        return userInfoDto;
     }
 
     @Transactional
@@ -104,7 +94,7 @@ public class UserService {
     @Transactional
     public FollowListDto getFollowingList(String username){
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<UserVo> follows = followRepositoryCustom.getFollowingList(user);
+        List<UserVo> follows = followRepositoryCustom.getFollowingList(username);
 
         FollowListDto followList = new FollowListDto(user.getId(), user.getUsername(), follows);
 
@@ -114,14 +104,20 @@ public class UserService {
     @Transactional
     public FollowListDto getFollowerList(String username){
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException());
-        List<UserVo> follows = followRepositoryCustom.getFollowerList(user);
+        List<UserVo> follows = followRepositoryCustom.getFollowerList(username);
 
         FollowListDto followList = new FollowListDto(user.getId(), user.getUsername(), follows);
 
         return followList;
     }
 
-    public void deleteFollow(long followId){ followRepository.deleteById(followId);}
+    @Transactional
+    public void deleteFollow(String followingUsername, String followerUsername){
+        User followingUser = userRepository.findByUsername(followingUsername).orElseThrow(UsernameNotFoundException::new);
+        User followerUser = userRepository.findByUsername(followerUsername).orElseThrow(UsernameNotFoundException::new);
+
+        followRepositoryCustom.deleteFollow(followingUser, followerUser);
+    }
 
     public Boolean isDuplicateId(String username){
         return userRepository.existsByUsername(username);

@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.UUID;
 
 @Component
@@ -29,6 +30,11 @@ public class ImageComponent {
 
         if(!multipartFile.getContentType().startsWith("image"))
             throw new InvalidFileFormatException();
+        File path = new File(imgPath);
+
+        if(!path.exists()){
+            path.mkdirs();
+        }
 
         UUID uuid = UUID.randomUUID();
 

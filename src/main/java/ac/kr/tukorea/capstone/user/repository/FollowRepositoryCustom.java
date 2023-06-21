@@ -6,6 +6,7 @@ import ac.kr.tukorea.capstone.user.vo.UserVo;
 import java.util.List;
 
 public interface FollowRepositoryCustom {
-    List<UserVo> getFollowingList(User user);
-    List<UserVo> getFollowerList(User user);
+    List<UserVo> getFollowingList(String username);
+    List<UserVo> getFollowerList(String username);
+    void deleteFollow(User followingUser, User followerUser);
 }

@@ -26,12 +26,10 @@ public class ChattingRoom {
     @JoinColumn(name = "sale_post_id")
     private Post post;
 
-    @Id // 판매 유저 id 참조용
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    @Id // 구매 유저 id 참조용
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
     private User buyer;
@@ -41,10 +39,4 @@ public class ChattingRoom {
 
     @OneToMany(mappedBy = "chattingRoomForUserId", fetch = FetchType.LAZY)
     private List<ChattingContent> chattingRoomForUserIds;
-
-
-
-
-
-
 }

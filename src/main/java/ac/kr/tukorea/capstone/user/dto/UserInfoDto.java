@@ -18,4 +18,6 @@ public class UserInfoDto {
     private int onSale;
     private int followNum;
     private int followingNum;
+    private boolean isFollow;
+
 }
