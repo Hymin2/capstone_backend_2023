@@ -8,10 +8,11 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProductRepositoryCustom {
-    List<ProductVo> getProductList(long categoryId, List<BooleanExpression> productFilters, String name);
+    List<ProductVo> getProductList(long categoryId, Map<String, List<BooleanExpression>> productFilters, String name);
     List<ProductDetailVo> getProductDetailList(long productId);
     List<ProductVo> getTopProductList(long categoryId);
     List<UsedProductPriceVo> getUsedProductPriceList(long productId);

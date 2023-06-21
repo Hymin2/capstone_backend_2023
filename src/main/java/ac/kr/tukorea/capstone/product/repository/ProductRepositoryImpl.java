@@ -7,12 +7,12 @@ import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -28,23 +28,57 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final QUsedProductPrice usedProductPrice = QUsedProductPrice.usedProductPrice;
 
     @Override
-    public List<ProductVo> getProductList(long categoryId, List<BooleanExpression> productFilters, String name) {
-        List<ProductVo> products = jpaQueryFactory.selectFrom(product)
-                .innerJoin(productImage)
-                .on(productImage.product.eq(product))
-                .leftJoin(usedProductPrice)
-                .on(usedProductPrice.product.eq(product))
-                .where(product.category.id.eq(categoryId), product.id.in(searchFilters(productFilters)), containsName(name))
-                .distinct()
-                .groupBy(product.id, productImage.path)
-                .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
-                        product.id,
-                        product.productName,
-                        product.modelName,
-                        product.companyName,
-                        usedProductPrice.price.avg().intValue().as("averagePrice"),
-                        usedProductPrice.id.count().intValue().as("transactionNum"),
-                        list(Projections.constructor(String.class, productImage.path)))));
+    public List<ProductVo> getProductList(long categoryId, Map<String, List<BooleanExpression>> productFilters, String name) {
+        List<ProductVo> products = null;
+
+        if(productFilters.getOrDefault("price", null) == null) {
+            products = jpaQueryFactory.selectFrom(product)
+                    .innerJoin(productImage)
+                    .on(productImage.product.eq(product))
+                    .leftJoin(usedProductPrice)
+                    .on(usedProductPrice.product.eq(product))
+                    .where(product.category.id.eq(categoryId),
+                            searchFilters(productFilters.getOrDefault("company", null)),
+                            searchFilters(productFilters.getOrDefault("size", null)),
+                            searchFilters(productFilters.getOrDefault("processor", null)),
+                            searchFilters(productFilters.getOrDefault("ram", null)),
+                            searchFilters(productFilters.getOrDefault("memory", null)),
+                            containsName(name))
+                    .distinct()
+                    .groupBy(product.id, productImage.path)
+                    .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
+                            product.id,
+                            product.productName,
+                            product.modelName,
+                            product.companyName,
+                            usedProductPrice.price.avg().intValue().as("averagePrice"),
+                            usedProductPrice.id.count().intValue().as("transactionNum"),
+                            list(Projections.constructor(String.class, productImage.path)))));
+        } else{
+            products = jpaQueryFactory.selectFrom(product)
+                    .innerJoin(productImage)
+                    .on(productImage.product.eq(product))
+                    .leftJoin(usedProductPrice)
+                    .on(usedProductPrice.product.eq(product))
+                    .where(product.category.id.eq(categoryId),
+                            searchFilters(productFilters.getOrDefault("company", null)),
+                            searchFilters(productFilters.getOrDefault("size", null)),
+                            searchFilters(productFilters.getOrDefault("processor", null)),
+                            searchFilters(productFilters.getOrDefault("ram", null)),
+                            searchFilters(productFilters.getOrDefault("memory", null)),
+                            containsName(name))
+                    .distinct()
+                    .groupBy(product.id, productImage.path)
+                    .having(havingPrice(productFilters.get("price")))
+                    .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
+                            product.id,
+                            product.productName,
+                            product.modelName,
+                            product.companyName,
+                            usedProductPrice.price.avg().intValue().as("averagePrice"),
+                            usedProductPrice.id.count().intValue().as("transactionNum"),
+                            list(Projections.constructor(String.class, productImage.path)))));
+        }
 
         return products;
     }
@@ -101,13 +135,19 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         return productPrices;
     }
 
-    public JPAQuery<Long> searchFilters(List<BooleanExpression> productFilters){
-        return jpaQueryFactory.select(product.id).from(product)
+    public BooleanBuilder havingPrice(List<BooleanExpression> productFilters){
+        return eqFilter(productFilters);
+    }
+
+    public BooleanExpression searchFilters(List<BooleanExpression> productFilters){
+        if(productFilters == null || productFilters.isEmpty()) return null;
+
+        return product.id.in(jpaQueryFactory.select(product.id).from(product)
                 .innerJoin(productDetail)
                 .on(productDetail.product.eq(product))
                 .innerJoin(detail)
                 .on(productDetail.detail.eq(detail))
-                .where(eqFilter(productFilters));
+                .where(eqFilter(productFilters)));
     }
     public BooleanExpression containsName(String name){
         if(name == null || name.equals("")) return null;
@@ -115,12 +155,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         return product.productName.contains(name);
     }
     public BooleanBuilder eqFilter(List<BooleanExpression> productFilters){
-        if(productFilters == null) return null;
+        if(productFilters == null || productFilters.isEmpty()) return null;
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         for(BooleanExpression filter : productFilters){
-            booleanBuilder.and(filter);
+            booleanBuilder.or(filter);
         }
 
         return booleanBuilder;

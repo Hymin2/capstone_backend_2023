@@ -37,6 +37,11 @@ class ProductServiceTest {
         String filter = "1001100210031004";
         String[] filters = filter.split("(?<=\\G.{" + 4 + "})");
         Arrays.stream(filters).forEach(System.out::println);
+
+        Object[] priceFilters = Arrays.stream(ProductFilterDetail.values()).filter((i) -> i.toString().startsWith("PRICE")).map(ProductFilterDetail::getCode).toArray();
+
+        System.out.println(ProductFilterDetail.getValue("1004"));
+
     }
 
     @DisplayName("Filter 코드로 BooleanExpression 받기")

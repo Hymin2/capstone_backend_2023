@@ -78,6 +78,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
     }
 
+    /*
     // Runtime error
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<MessageForm> handleRuntimeErrorException(){
@@ -85,4 +86,6 @@ public class GlobalExceptionHandler {
         MessageForm messageForm = new MessageForm(500, "Runtime error", "failed");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(messageForm);
     }
+
+     */
 }
