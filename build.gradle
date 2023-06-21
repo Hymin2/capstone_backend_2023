@@ -35,6 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-logging'
 	implementation group: 'org.json', name: 'json', version: '20230227'
+	implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3-1'
 
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
