@@ -72,6 +72,14 @@ public class UserController {
 
     }
 
+    @DeleteMapping(value = "/logout")
+    public ResponseEntity logout(@RequestHeader("Authorization-refresh") String refreshToken,
+                                  @RequestParam("username") String username){
+        userService.logout(refreshToken, username);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PutMapping(value = "{username}")
     public ResponseEntity<MessageForm> updateNickname(@PathVariable String username,
                                                       @RequestBody String nickname){
