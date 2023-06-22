@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/chat")
 @Log4j2
 public class RoomController {
-
     private final ChatRoomRepository repository;
     private MessageForm messageForm = new MessageForm();
 
