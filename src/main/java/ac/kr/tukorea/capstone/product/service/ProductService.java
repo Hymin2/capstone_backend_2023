@@ -2,6 +2,7 @@ package ac.kr.tukorea.capstone.product.service;
 
 import ac.kr.tukorea.capstone.config.Exception.CategoryNotFoundException;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
+import ac.kr.tukorea.capstone.config.util.ProductFilter;
 import ac.kr.tukorea.capstone.config.util.ProductFilterDetail;
 import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
@@ -63,16 +64,33 @@ public class ProductService {
         return productDetailsDto;
     }
 
-    public List<BooleanExpression> getFilterList(String filter){
-        if(filter == null || filter.equals("")) return null;
+    public Map<String, List<BooleanExpression>> getFilterList(String filter){
+        if(filter == null || filter.equals("")) return new HashMap<>();
 
-        String[] filters = filter.split("(?<=\\G.{" + 4 + "})");
+        String[] filters = filter.split("(?<=\\G.{" + 5 + "})");
 
-        List<BooleanExpression> productFilterDetails = Arrays.stream(filters)
-                .map((str) -> ProductFilterDetail.getFilter(str))
-                .collect(Collectors.toList());
+        Map<String, List<BooleanExpression>> filterMap = new HashMap<>();
 
-        return productFilterDetails;
+        filterMap.put("company", new ArrayList<>());
+        filterMap.put("price", new ArrayList<>());
+        filterMap.put("size", new ArrayList<>());
+        filterMap.put("processor", new ArrayList<>());
+        filterMap.put("ram", new ArrayList<>());
+        filterMap.put("memory", new ArrayList<>());
+
+        for(String str : filters){
+            String filterName = ProductFilterDetail.getValue(str);
+            System.out.println(str + " " + filterName);
+
+            if(filterName.startsWith("COMPANY")) filterMap.get("company").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("PRICE")) filterMap.get("price").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("SIZE")) filterMap.get("size").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("PROCESSOR")) filterMap.get("processor").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("RAM")) filterMap.get("ram").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("MEMORY")) filterMap.get("memory").add(ProductFilterDetail.getFilter(str));
+        }
+
+        return filterMap;
     }
 
     public Resource getProductImage(String name){

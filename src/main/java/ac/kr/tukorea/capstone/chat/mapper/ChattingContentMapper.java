@@ -10,10 +10,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChattingContentMapper {
     public ChattingContent ChattingContentCreateInfo(ChattingMessageDto chattingMessageDto){
+        /*
         return ChattingContent.builder()
                 .content(chattingMessageDto.getContent())
                 .chattingRoomForUserId(chattingMessageDto.getUserId())
                 .chattingRoom(chattingMessageDto.getRoomId())
                 .build();
+
+
+         */
+
+        return null;
     }
 }

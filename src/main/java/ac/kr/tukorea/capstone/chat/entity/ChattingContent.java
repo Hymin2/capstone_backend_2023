@@ -1,5 +1,6 @@
 package ac.kr.tukorea.capstone.chat.entity;
 
+import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class ChattingContent {
     private Date createdAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private ChattingRoom chattingRoomForUserId;
+    private User chattingRoomForUserId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")
     private ChattingRoom chattingRoom;

@@ -3,6 +3,7 @@ package ac.kr.tukorea.capstone.user.service;
 import ac.kr.tukorea.capstone.config.Exception.DuplicateNickNameException;
 import ac.kr.tukorea.capstone.config.Exception.UsernameNotFoundException;
 import ac.kr.tukorea.capstone.config.WebSecurityConfig;
+import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.ImageComponent;
 import ac.kr.tukorea.capstone.post.entity.Post;
 import ac.kr.tukorea.capstone.post.repository.PostImageRepository;
@@ -39,6 +40,7 @@ public class UserService {
     private final FollowRepository followRepository;
     private final FollowRepositoryCustom followRepositoryCustom;
     private final UserRepositoryCustom userRepositoryCustom;
+    private final JwtTokenService jwtTokenService;
 
     public void registerUser(UserRegisterDto userRegisterDto){
         User user = userMapper.UserRegisterInfo(userRegisterDto);
@@ -149,5 +151,11 @@ public class UserService {
             imgPath = "/capstone/resource/user/profile/img/" + name;
 
         return imageComponent.getImage(imgPath);
+    }
+
+    public void logout(String refreshToken, String username) {
+        refreshToken = refreshToken.replace("Bearer ", "");
+        jwtTokenService.validateRefreshToken(refreshToken, username);
+        jwtTokenService.deleteRefreshToken(refreshToken);
     }
 }

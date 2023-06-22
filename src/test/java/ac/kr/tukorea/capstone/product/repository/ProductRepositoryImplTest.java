@@ -27,13 +27,6 @@ class ProductRepositoryImplTest {
     @Test
     public void getProductList(){
         Category category = categoryRepository.findById(1L).get();
-
-
-        List<ProductVo> productList = productRepository.getProductList(1L, Arrays.asList(ProductFilterDetail.getFilter("1033")), null);
-
-        for (ProductVo product : productList){
-            System.out.println(product.getProductName() + " " + product.getProductName());
-        }
     }
 
     @DisplayName("상품 디테일 정보 출력 테스트")
@@ -49,7 +42,7 @@ class ProductRepositoryImplTest {
     @DisplayName("제조사 and 적용 테스트")
     @Test
     public void getCompanyFilterAnd(){
-        boolean b =ProductFilterDetail.COMPANY_EQ_SAMSUNG.getFilter().equals(ProductFilterDetail.getFilter("1001"));
+        boolean b =ProductFilterDetail.COMPANY_EQ_SAMSUNG_PHONE.getFilter().equals(ProductFilterDetail.getFilter("1001"));
         System.out.println(b);
     }
 }

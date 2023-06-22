@@ -13,12 +13,13 @@ import java.util.function.BiFunction;
 @AllArgsConstructor
 public enum ProductFilter {
     COMPANY_EQ((s1, s2) -> QProduct.product.companyName.eq(s1)),
-    COMPANY_ETC((s1, s2) -> QProduct.product.companyName.ne("삼성전자").and(QProduct.product.companyName.ne("APPLE"))),
+    COMPANY_ETC((s1, s2) -> QProduct.product.companyName.ne("삼성전자").and(QProduct.product.companyName.ne("APPLE"))
+            .and(QProduct.product.companyName.ne("Microsoft")).and(QProduct.product.companyName.ne("레노버"))),
     RAM_EQ((s1, s2) -> QDetail.detail.detailName.eq("RAM").and(QDetail.detail.detailContent.eq(s1))),
     MEMORY_EQ((s1, s2) -> QDetail.detail.detailName.eq("내장메모리").and(QDetail.detail.detailContent.eq(s1))),
     SIZE_BETWEEN((s1, s2) -> QDetail.detail.detailName.eq("크기").and(QDetail.detail.detailContent.between(s1, s2))),
     PROCESSOR_EQ((s1, s2) -> QDetail.detail.detailName.eq("프로세서").and(QDetail.detail.detailContent.like(s1))),
-    PRICE_BETWEEN((s1, s2) -> QUsedProductPrice.usedProductPrice.price.avg().between(Double.parseDouble(s2), Double.parseDouble(s1)));
+    PRICE_BETWEEN((s1, s2) -> QUsedProductPrice.usedProductPrice.price.avg().between(Double.parseDouble(s1), Double.parseDouble(s2)));
     private BiFunction<String, String, BooleanExpression> filter;
 
     public BooleanExpression getQuery(String s1, String s2){
