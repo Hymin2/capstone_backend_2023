@@ -2,10 +2,7 @@ package ac.kr.tukorea.capstone.chat.entity;
 
 import ac.kr.tukorea.capstone.post.entity.Post;
 import ac.kr.tukorea.capstone.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Table(name = "chatting_room_table")
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChattingRoom {

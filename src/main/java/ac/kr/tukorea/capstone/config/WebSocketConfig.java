@@ -13,16 +13,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
         //origins를 개발 도메인으로 변경하니 잘 동작하였다.
         //이유는 왜 그런지 아직 찾지 못함
         registry.addEndpoint("/stomp/chat")
-                .setAllowedOrigins("http://localhost:8080")
-                .withSockJS();
+                .setAllowedOrigins("*");
         //핸드셰이크 경로
     }
 
     /*어플리케이션 내부에서 사용할 path를 지정할 수 있음*/
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-
+        // 메세지 발행 요청 url -> 메세지 보낼 때
         registry.setApplicationDestinationPrefixes("/pub");
+        // 메세지 구독 요청 url -> 메세지 받을 때
         registry.enableSimpleBroker("/sub");
         // /sub로 시작하는 "destination" 헤더를 가진 메세지를 브로커로 라우팅한다.
     }
