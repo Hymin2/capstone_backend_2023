@@ -9,10 +9,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ChattingRoomMapper {
     public ChattingRoom ChattingRoomCreateInfo(ChattingCreateDto chattingCreateDto){
+        /*
         return ChattingRoom.builder()
-                .post(chattingCreateDto.getSale_post_id())
+                .post(chattingCreateDto.getSalePostId())
                 .seller(chattingCreateDto.getSeller())
                 .buyer(chattingCreateDto.getBuyer())
                 .build();
+
+         */
+
+        return null;
     }
 }

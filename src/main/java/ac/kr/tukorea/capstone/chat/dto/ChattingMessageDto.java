@@ -13,11 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChattingMessageDto {
-    @NotEmpty
-    private ChattingRoom roomId;
-    @NotEmpty
-    private ChattingRoom userId;
-    @NotEmpty
+    private long roomId;
+    private long userId;
     private String content;
 
     /*public ChattingMessageDto(int roomId, int userId, String content){

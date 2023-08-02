@@ -24,14 +24,12 @@ import java.util.*;
 @Service
 public class ChatService {
     private final ObjectMapper objectMapper;
-    //private List<ChattingRoom> chattingRooms;
     private final ChattingRoomMapper chattingRoomMapper;
     private final ChattingContentMapper chattingContentMapper;
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingContentRepository chattingContentRepository;
 
     public ChattingRoom createRoom(ChattingCreateDto chattingCreateDto) {
-
         ChattingRoom chattingRoom = chattingRoomMapper.ChattingRoomCreateInfo(chattingCreateDto);
 
         return chattingRoomRepository.save(chattingRoom);

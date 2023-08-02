@@ -2,58 +2,70 @@ package ac.kr.tukorea.capstone.chat.controller;
 
 import ac.kr.tukorea.capstone.chat.dto.ChattingCreateDto;
 import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
+import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.service.ChatService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
+import ac.kr.tukorea.capstone.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 
-import java.net.http.WebSocket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
 
+@Controller
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/api/v1/chat")
 public class ChatController {
-
-    private List<Map> rooms = new ArrayList<Map>();
-    private Map<String, WebSocketSession> user = new HashMap<>();
+    private final SimpMessageSendingOperations sendingOperations;
     private final ChatService chatService;
-
+    private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     private MessageForm messageForm = new MessageForm();
 
-    @PostMapping(value = "/create")
-    public ResponseEntity<MessageForm> createRoom(@RequestBody ChattingCreateDto chattingCreateDto) {
-        try{
-            chatService.createRoom(chattingCreateDto);
-            //user.put()
-            //WebSocket session = new WebSocket()
+    //Client가 SEND할 수 있는 경로
+    //stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
+    //"/pub/chat/create"
+    @MessageMapping(value = "/chat/create")
+    public ResponseEntity<MessageForm> createChattingRoom(ChattingCreateDto chattingCreateDto){
+        ChattingRoom chattingRoom = chatService.createRoom(chattingCreateDto);
 
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
-        }
+        /*ChattingMessageDto message = new ChattingMessageDto();
+        message.setContent(chattingCreateDto.getBuyer() + "님이 채팅방에 참여하였습니다.");
+        message.setUserId(chattingRoom.getBuyer().getBuyer().get((int) chattingCreateDto.getBuyer().getId()));
+        User userId = userRepository.findById(chattingCreateDto.getBuyer().getId());
+        message.setUserId(chattingRoom.getBuyer());*/
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
-    }
-    @PostMapping(value = "/chat")
-    public ResponseEntity<MessageForm> createContent(@RequestBody ChattingMessageDto chattingMessageDto){
-        try{
-            chatService.createContent(chattingMessageDto);
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(messageForm);
-        }
+        template.convertAndSend("/sub/chat/" + chattingCreateDto.getBuyerId(), "buyer");
+        template.convertAndSend("/sub/chat/" + chattingCreateDto.getSellerId(), "seller");
+        template.convertAndSend("/sub/chat/" + chattingCreateDto.getSellerId(), "seller");
+
+        autoSubscribe(chattingRoom.getId(),chattingCreateDto.getSellerId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
 
+    @MessageMapping(value = "/chat/message")
+    public void message(ChattingMessageDto message) throws IOException {
+        // public void message(ChattingMessageDto message) -> public void message(ChatMessageDto message) 변경시 채팅은 됨
+        log.info("message : {} send by user : {} to room number : {}", message.getContent(), message.getUserId(), message.getRoomId());
 
-    //@GetMapping
-    /*public List<ChattingRoom> findAllRoom() {
-        return chatService.findAllRoom();
-    }*/
+        //chatService.createContent(message);
+
+        //template.convertAndSend("/sub/chat/" + message.getRoomId(), message);
+
+        sendingOperations.convertAndSend("/sub/room/" + message.getRoomId(), message);
+    }
+
+    @MessageMapping(value = "/chat/auto_subscribe")
+    public ResponseEntity<MessageForm> autoSubscribe(long roomId, long sellerId){
+        //long message = roomId;//구독해야할 roomId 들어가야함
+        sendingOperations.convertAndSend("/sub/auto/" + sellerId, roomId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
+    }
 }

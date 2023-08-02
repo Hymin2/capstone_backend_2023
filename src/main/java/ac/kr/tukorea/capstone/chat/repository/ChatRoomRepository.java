@@ -1,7 +1,6 @@
 package ac.kr.tukorea.capstone.chat.repository;
 
 
-import ac.kr.tukorea.capstone.chat.dto.ChatRoomDto;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +8,7 @@ import java.util.*;
 
 @Repository
 public class ChatRoomRepository {
+    /*
 
     private Map<String, ChatRoomDto> chatRoomDTOMap;
 
@@ -35,4 +35,6 @@ public class ChatRoomRepository {
         // JPA로 DB에 실제로 저장해야함
         return room;
     }
+
+     */
 }

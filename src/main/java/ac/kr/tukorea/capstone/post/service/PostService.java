@@ -13,8 +13,10 @@ import ac.kr.tukorea.capstone.post.repository.*;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.repository.ProductRepository;
+import ac.kr.tukorea.capstone.product.service.ProductService;
 import ac.kr.tukorea.capstone.user.entity.User;
 import ac.kr.tukorea.capstone.user.repository.UserRepository;
+import ac.kr.tukorea.capstone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -30,17 +32,16 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final PostRepositoryImpl postRepositoryImpl;
-    private final PostImageRepository postImageRepository;
     private final LikePostRepository likePostRepository;
     private final LikePostRepositoryCustom likePostRepositoryCustom;
-    private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final ImageComponent imageComponent;
+    private final ProductService productService;
+    private final UserService userService;
 
     @Transactional
     public void registerPost(PostRegisterDto postRegisterDto, List<MultipartFile> multipartFiles){
-        Product product = productRepository.findById(postRegisterDto.getProductId()).get();
-        User user = userRepository.findByUsername(postRegisterDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
+        Product product = productService.getProduct(postRegisterDto.getProductId());
+        User user = userService.getUserByUsername(postRegisterDto.getUsername());
         List<PostImage> postImages = new ArrayList<>();
 
         Post post = Post.builder()
@@ -78,9 +79,8 @@ public class PostService {
 
 
     @Transactional
-    public List<PostVo> getSalePostList(Optional<Long> productId, String username, String postTitle, String postContent, String isOnSale){
-        Product product = null;
-        if(!productId.isEmpty()) product = productRepository.findById(productId.get()).get();
+    public List<PostVo> getSalePostList(long productId, String username, String postTitle, String postContent, String isOnSale){
+        Product product = productService.getProduct(productId);
 
         List<PostVo> posts = postRepositoryImpl.getSearchedPostList(product, username, postTitle, postContent, isOnSale);
 
@@ -95,7 +95,7 @@ public class PostService {
 
     public void registerLikePost(LikePostRegisterDto likePostRegisterDto){
         Post post = postRepository.findById(likePostRegisterDto.getPostId()).orElseThrow(() -> new PostNotFoundException());
-        User user = userRepository.findByUsername(likePostRegisterDto.getUsername()).orElseThrow(() -> new UsernameNotFoundException());
+        User user = userService.getUserByUsername(likePostRegisterDto.getUsername());
 
         LikePost likePost = LikePost
                 .builder()
@@ -115,7 +115,7 @@ public class PostService {
     @Transactional
     public void deleteLikePost(long postId, String username){
         try {
-            User user = userRepository.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
+            User user = userService.getUserByUsername(username);
             likePostRepositoryCustom.deleteLikePost(postId, user);
         } catch (RuntimeException e){
             System.out.println(e.getCause());

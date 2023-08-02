@@ -42,6 +42,12 @@ public class UserService {
     private final UserRepositoryCustom userRepositoryCustom;
     private final JwtTokenService jwtTokenService;
 
+    public User getUserByUsername(String username){
+        User user = userRepository.findByUsername(username).orElseThrow(UsernameNotFoundException::new);
+
+        return user;
+    }
+
     public void registerUser(UserRegisterDto userRegisterDto){
         User user = userMapper.UserRegisterInfo(userRegisterDto);
         user.setEncodePassword(webSecurityConfig.getPasswordEncoder().encode(user.getUserPassword()));

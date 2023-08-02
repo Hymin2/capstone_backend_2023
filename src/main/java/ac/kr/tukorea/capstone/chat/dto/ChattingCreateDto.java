@@ -6,17 +6,16 @@ import ac.kr.tukorea.capstone.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.validation.constraints.NotEmpty;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChattingCreateDto {
-
-    @NotEmpty
-    private Post sale_post_id;
-    @NotEmpty
-    private User seller;
-    @NotEmpty
-    private User buyer;
+    private long salePostId;
+    private long sellerId;
+    private long buyerId;
 }

@@ -3,10 +3,12 @@ package ac.kr.tukorea.capstone.product.repository;
 import ac.kr.tukorea.capstone.product.entity.*;
 import ac.kr.tukorea.capstone.product.vo.ProductDetailVo;
 import ac.kr.tukorea.capstone.product.vo.ProductVo;
+import ac.kr.tukorea.capstone.product.vo.RecommendProductVo;
 import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,7 +30,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     private final QUsedProductPrice usedProductPrice = QUsedProductPrice.usedProductPrice;
 
     @Override
-    public List<ProductVo> getProductList(long categoryId, Map<String, List<BooleanExpression>> productFilters, String name) {
+    public List<ProductVo> getFilterProductList(long categoryId, Map<String, List<BooleanExpression>> productFilters, String name) {
         List<ProductVo> products = null;
 
         if(productFilters.getOrDefault("price", null) == null) {
@@ -123,6 +125,30 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
     }
 
     @Override
+    public List<ProductVo> getProductListByProductId(List<Long> productIdList) {
+        List<ProductVo> products = jpaQueryFactory.selectFrom(product)
+                .innerJoin(productImage)
+                .on(productImage.product.eq(product))
+                .innerJoin(usedProductPrice)
+                .on(usedProductPrice.product.eq(product))
+                .where(product.id.in(productIdList))
+                .distinct()
+                .groupBy(product.id, productImage.path)
+                .orderBy(usedProductPrice.id.count().desc())
+                .limit(10)
+                .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
+                        product.id,
+                        product.productName,
+                        product.modelName,
+                        product.companyName,
+                        usedProductPrice.price.avg().intValue().as("averagePrice"),
+                        usedProductPrice.id.count().intValue().as("transactionNum"),
+                        list(Projections.constructor(String.class, productImage.path)))));
+
+        return products;
+    }
+
+    @Override
     public List<UsedProductPriceVo> getUsedProductPriceList(long productId){
         List<UsedProductPriceVo> productPrices = jpaQueryFactory
                 .select(Projections.bean(UsedProductPriceVo.class, usedProductPrice.time.as("time"), usedProductPrice.price.avg().intValue().as("price")))
@@ -133,6 +159,22 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                 .fetch();
 
         return productPrices;
+    }
+
+    @Override
+    public List<RecommendProductVo> getRecommendProductList(long productId) {
+        List<RecommendProductVo> recommendProducts = jpaQueryFactory
+                .select(Projections.constructor(RecommendProductVo.class,
+                        productDetail.product.id,
+                        productDetail.product.id.count().intValue(),
+                        JPAExpressions.select(usedProductPrice.id.count().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productId)),
+                        JPAExpressions.select(usedProductPrice.price.avg().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productId))))
+                .from(productDetail)
+                .where(productDetail.detail.id.in(JPAExpressions.select(detail.id).from(productDetail).where(productDetail.product.id.eq(productId))))
+                .groupBy(productDetail.product.id)
+                .fetch();
+
+        return recommendProducts;
     }
 
     public BooleanBuilder havingPrice(List<BooleanExpression> productFilters){

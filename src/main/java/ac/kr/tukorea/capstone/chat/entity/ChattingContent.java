@@ -22,18 +22,20 @@ public class ChattingContent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private long id;
+
     @Column(name = "content", nullable = false)
     private String content;
+
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     @Column(name = "created_at")
     private Date createdAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User chattingRoomForUserId;
+    @JoinColumn(name = "send_user_id")
+    private User sendUserId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")
     private ChattingRoom chattingRoom;
-
-
 }
