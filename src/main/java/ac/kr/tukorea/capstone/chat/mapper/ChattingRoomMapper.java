@@ -1,6 +1,6 @@
 package ac.kr.tukorea.capstone.chat.mapper;
 
-import ac.kr.tukorea.capstone.chat.dto.ChattingCreateDto;
+import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ChattingRoomMapper {
-    public ChattingRoom ChattingRoomCreateInfo(ChattingCreateDto chattingCreateDto){
+    public ChattingRoom ChattingRoomCreateInfo(ChatRoomCreateDto chatRoomCreateDto){
         /*
         return ChattingRoom.builder()
-                .post(chattingCreateDto.getSalePostId())
-                .seller(chattingCreateDto.getSeller())
-                .buyer(chattingCreateDto.getBuyer())
+                .post(chatRoomCreateDto.getSalePostId())
+                .seller(chatRoomCreateDto.getSeller())
+                .buyer(chatRoomCreateDto.getBuyer())
                 .build();
 
          */

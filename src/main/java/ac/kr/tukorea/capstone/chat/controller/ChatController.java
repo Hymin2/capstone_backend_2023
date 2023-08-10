@@ -1,12 +1,10 @@
 package ac.kr.tukorea.capstone.chat.controller;
 
-import ac.kr.tukorea.capstone.chat.dto.ChattingCreateDto;
+import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
 import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.service.ChatService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
-import ac.kr.tukorea.capstone.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,20 +30,20 @@ public class ChatController {
     //stompConfig에서 설정한 applicationDestinationPrefixes와 @MessageMapping 경로가 병합됨
     //"/pub/chat/create"
     @MessageMapping(value = "/chat/create")
-    public ResponseEntity<MessageForm> createChattingRoom(ChattingCreateDto chattingCreateDto){
-        ChattingRoom chattingRoom = chatService.createRoom(chattingCreateDto);
+    public ResponseEntity<MessageForm> createChattingRoom(ChatRoomCreateDto chatRoomCreateDto){
+        ChattingRoom chattingRoom = chatService.createRoom(chatRoomCreateDto);
 
         /*ChattingMessageDto message = new ChattingMessageDto();
-        message.setContent(chattingCreateDto.getBuyer() + "님이 채팅방에 참여하였습니다.");
-        message.setUserId(chattingRoom.getBuyer().getBuyer().get((int) chattingCreateDto.getBuyer().getId()));
-        User userId = userRepository.findById(chattingCreateDto.getBuyer().getId());
+        message.setContent(chatRoomCreateDto.getBuyer() + "님이 채팅방에 참여하였습니다.");
+        message.setUserId(chattingRoom.getBuyer().getBuyer().get((int) chatRoomCreateDto.getBuyer().getId()));
+        User userId = userRepository.findById(chatRoomCreateDto.getBuyer().getId());
         message.setUserId(chattingRoom.getBuyer());*/
 
-        template.convertAndSend("/sub/chat/" + chattingCreateDto.getBuyerId(), "buyer");
-        template.convertAndSend("/sub/chat/" + chattingCreateDto.getSellerId(), "seller");
-        template.convertAndSend("/sub/chat/" + chattingCreateDto.getSellerId(), "seller");
+        template.convertAndSend("/sub/chat/" + chatRoomCreateDto.getBuyerId(), "buyer");
+        template.convertAndSend("/sub/chat/" + chatRoomCreateDto.getSellerId(), "seller");
+        template.convertAndSend("/sub/chat/" + chatRoomCreateDto.getSellerId(), "seller");
 
-        autoSubscribe(chattingRoom.getId(),chattingCreateDto.getSellerId());
+        autoSubscribe(chattingRoom.getId(), chatRoomCreateDto.getSellerId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }

@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "chatting_room_table")
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChattingRoom {
@@ -34,4 +33,8 @@ public class ChattingRoom {
 
     @OneToMany(mappedBy = "chattingRoom", fetch = FetchType.LAZY)
     private List<ChattingContent> chattingContents;
+
+    public void setSeller(User seller){
+        this.seller = seller;
+    }
 }

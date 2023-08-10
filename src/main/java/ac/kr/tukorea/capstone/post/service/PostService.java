@@ -135,4 +135,8 @@ public class PostService {
 
         return imageComponent.getImage(imgPath);
     }
+
+    public Post getPostByPostId(long salePostId) {
+        return postRepository.findById(salePostId).orElseThrow(PostNotFoundException::new);
+    }
 }

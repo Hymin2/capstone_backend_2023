@@ -1,6 +1,6 @@
 package ac.kr.tukorea.capstone.chat.service;
 
-import ac.kr.tukorea.capstone.chat.dto.ChattingCreateDto;
+import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
 import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
 import ac.kr.tukorea.capstone.chat.entity.ChattingContent;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,8 +27,8 @@ public class ChatService {
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingContentRepository chattingContentRepository;
 
-    public ChattingRoom createRoom(ChattingCreateDto chattingCreateDto) {
-        ChattingRoom chattingRoom = chattingRoomMapper.ChattingRoomCreateInfo(chattingCreateDto);
+    public ChattingRoom createRoom(ChatRoomCreateDto chatRoomCreateDto) {
+        ChattingRoom chattingRoom = chattingRoomMapper.ChattingRoomCreateInfo(chatRoomCreateDto);
 
         return chattingRoomRepository.save(chattingRoom);
     }

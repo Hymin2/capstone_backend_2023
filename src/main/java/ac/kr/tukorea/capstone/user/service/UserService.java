@@ -164,4 +164,8 @@ public class UserService {
         jwtTokenService.validateRefreshToken(refreshToken, username);
         jwtTokenService.deleteRefreshToken(refreshToken);
     }
+
+    public User getUserByUserId(long userId) {
+        return userRepository.findById(userId).orElseThrow(UsernameNotFoundException::new);
+    }
 }
