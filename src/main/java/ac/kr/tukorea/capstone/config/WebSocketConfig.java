@@ -1,11 +1,16 @@
 package ac.kr.tukorea.capstone.config;
 
+import ac.kr.tukorea.capstone.config.handler.StompHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
+    private final StompHandler stompHandler;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         //endpoint를 /stomp로 하고, allowedOrigins를 "*"로 하면 페이지에서
@@ -13,7 +18,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
         //origins를 개발 도메인으로 변경하니 잘 동작하였다.
         //이유는 왜 그런지 아직 찾지 못함
         registry.addEndpoint("/stomp/chat")
-                .setAllowedOrigins("*");
+                .setAllowedOrigins("*").withSockJS();
         //핸드셰이크 경로
     }
 
@@ -25,5 +30,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
         // 메세지 구독 요청 url -> 메세지 받을 때
         registry.enableSimpleBroker("/sub");
         // /sub로 시작하는 "destination" 헤더를 가진 메세지를 브로커로 라우팅한다.
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration channelRegistration){
+        channelRegistration.interceptors(stompHandler);
     }
 }

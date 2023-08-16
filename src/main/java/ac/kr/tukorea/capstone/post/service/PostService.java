@@ -79,6 +79,12 @@ public class PostService {
 
 
     @Transactional
+    public void setPostIsNotOnSale(long postId){
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+        post.setIsOnSales("N");
+    }
+    @Transactional
     public List<PostVo> getSalePostList(long productId, String username, String postTitle, String postContent, String isOnSale){
         Product product = productService.getProduct(productId);
 

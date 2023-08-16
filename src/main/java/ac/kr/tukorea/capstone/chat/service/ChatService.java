@@ -8,10 +8,14 @@ import ac.kr.tukorea.capstone.chat.mapper.ChattingContentMapper;
 import ac.kr.tukorea.capstone.chat.mapper.ChattingRoomMapper;
 import ac.kr.tukorea.capstone.chat.repository.ChattingContentRepository;
 import ac.kr.tukorea.capstone.chat.repository.ChattingRoomRepository;
+import ac.kr.tukorea.capstone.post.service.PostService;
+import ac.kr.tukorea.capstone.user.entity.User;
+import ac.kr.tukorea.capstone.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -21,30 +25,32 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Service
 public class ChatService {
-    private final ObjectMapper objectMapper;
-    private final ChattingRoomMapper chattingRoomMapper;
-    private final ChattingContentMapper chattingContentMapper;
-    private final ChattingRoomRepository chattingRoomRepository;
-    private final ChattingContentRepository chattingContentRepository;
+    private final RoomService roomService;
+    private final PostService postService;
 
-    public ChattingRoom createRoom(ChatRoomCreateDto chatRoomCreateDto) {
-        ChattingRoom chattingRoom = chattingRoomMapper.ChattingRoomCreateInfo(chatRoomCreateDto);
+    @Transactional
+    public boolean dealComplete(long roomId, long postId, String messageType) {
+        ChattingRoom chattingRoom = roomService.getRoom(roomId);
 
-        return chattingRoomRepository.save(chattingRoom);
-    }
+        if(messageType.equals("Buyer") && !chattingRoom.isBuyerDealCompleted()){
+            chattingRoom.setBuyerDealCompleted(true);
 
-    public ChattingContent createContent(ChattingMessageDto chattingMessageDto) {
+            if(chattingRoom.isSellerDealCompleted()){
+                postService.setPostIsNotOnSale(postId);
 
-        ChattingContent chattingContent = chattingContentMapper.ChattingContentCreateInfo(chattingMessageDto);
+                return true;
+            }
+        } else if (messageType.equals("Seller") && !chattingRoom.isSellerDealCompleted()){
+            chattingRoom.setSellerDealCompleted(true);
 
-        return chattingContentRepository.save(chattingContent);
-    }
+            if(chattingRoom.isBuyerDealCompleted()){
+                postService.setPostIsNotOnSale(postId);
 
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+                return true;
+            }
         }
+
+        return false;
     }
+
 }

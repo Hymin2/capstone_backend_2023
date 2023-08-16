@@ -19,6 +19,12 @@ public class ChattingRoom {
     @Column(name = "id", nullable = false)
     private long id;
 
+    @Column(name = "is_seller_deal_completed")
+    private boolean isSellerDealCompleted;
+
+    @Column(name = "is_buyer_deal_completed")
+    private boolean isBuyerDealCompleted;
+
     @ManyToOne(fetch = FetchType.LAZY) // 판매글 id 참조용
     @JoinColumn(name = "sale_post_id")
     private Post post;
@@ -36,5 +42,14 @@ public class ChattingRoom {
 
     public void setSeller(User seller){
         this.seller = seller;
+    }
+    public void setBuyer(User buyer){ this.buyer = buyer; }
+
+    public void setSellerDealCompleted(boolean isSellerDealCompleted){
+        this.isSellerDealCompleted = isSellerDealCompleted;
+    }
+
+    public void setBuyerDealCompleted(boolean isBuyerDealCompleted){
+        this.isBuyerDealCompleted = isBuyerDealCompleted;
     }
 }

@@ -39,17 +39,11 @@ public class RoomController {
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
 
-    @PutMapping("{roomId}")
-    public ResponseEntity<> additionSellerId(@PathVariable long roomId,
-                                                        @RequestBody long sellerId){
-        roomService.additionSeller(roomId, sellerId);
+    @DeleteMapping
+    public ResponseEntity deleteChatRoom(@RequestParam long roomId,
+                                                      @RequestParam String type){
+        roomService.deleteRooms(roomId, type);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    @DeleteMapping
-    public ResponseEntity<MessageForm> deleteChatRoom(@RequestParam long roomId,
-                                                      @RequestParam long userId){
-
     }
 }

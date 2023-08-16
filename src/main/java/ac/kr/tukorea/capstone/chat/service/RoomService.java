@@ -1,10 +1,12 @@
 package ac.kr.tukorea.capstone.chat.service;
 
 import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
+import ac.kr.tukorea.capstone.chat.entity.ChattingContent;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.repository.ChatRoomCustomRepository;
 import ac.kr.tukorea.capstone.chat.repository.ChattingRoomRepository;
 import ac.kr.tukorea.capstone.chat.vo.ChatRoomVo;
+import ac.kr.tukorea.capstone.config.Exception.NotFoundRoomException;
 import ac.kr.tukorea.capstone.config.Exception.RoomNotFoundException;
 import ac.kr.tukorea.capstone.post.entity.Post;
 import ac.kr.tukorea.capstone.post.service.PostService;
@@ -34,6 +36,8 @@ public class RoomService {
         ChattingRoom chattingRoom = ChattingRoom.builder()
                 .buyer(user)
                 .post(post)
+                .isBuyerDealCompleted(false)
+                .isSellerDealCompleted(false)
                 .build();
 
         chattingRoomRepository.save(chattingRoom);
@@ -50,10 +54,19 @@ public class RoomService {
     }
 
     @Transactional
-    public void additionSeller(long roomId, long sellerId){
-        ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-        User seller = userService.getUserByUserId(sellerId);
+    public void deleteRooms(long roomId, String type){
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(roomId).orElseThrow(NotFoundRoomException::new);
 
-        chattingRoom.setSeller(seller);
+        if(chattingRoom.getBuyer() == null || chattingRoom.getSeller() == null)
+            chattingRoomRepository.deleteById(roomId);
+
+        if(type.equals("buyer"))
+            chattingRoom.setBuyer(null);
+        else chattingRoom.setSeller(null);
+
+    }
+
+    public ChattingRoom getRoom(long roomId){
+        return chattingRoomRepository.findById(roomId).orElseThrow(NotFoundRoomException::new);
     }
 }

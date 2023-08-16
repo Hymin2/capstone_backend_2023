@@ -168,4 +168,10 @@ public class UserService {
     public User getUserByUserId(long userId) {
         return userRepository.findById(userId).orElseThrow(UsernameNotFoundException::new);
     }
+
+    public String getNicknameByUserId(long userId){
+        User user = getUserByUserId(userId);
+
+        return user.getNickname();
+    }
 }

@@ -58,4 +58,8 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private List<ChattingRoom> post_id;
+
+    public void setIsOnSales(String isOnSales) {
+        this.isOnSales = isOnSales;
+    }
 }

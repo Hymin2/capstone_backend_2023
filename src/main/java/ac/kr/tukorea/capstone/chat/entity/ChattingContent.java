@@ -17,6 +17,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChattingContent {
+    public enum MessageType{
+        TALK, COMPLETE
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +28,10 @@ public class ChattingContent {
 
     @Column(name = "content", nullable = false)
     private String content;
+
+    @Column(name = "massage_type")
+    @Enumerated(EnumType.STRING)
+    private MessageType messageType;
 
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp

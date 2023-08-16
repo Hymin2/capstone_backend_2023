@@ -4,6 +4,7 @@ package ac.kr.tukorea.capstone.chat.dto;
 import ac.kr.tukorea.capstone.chat.entity.ChattingContent;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import lombok.*;
+import org.aspectj.bridge.Message;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -15,12 +16,8 @@ import java.util.List;
 public class ChattingMessageDto {
     private long roomId;
     private long userId;
+    private long postId;
     private String content;
-
-    /*public ChattingMessageDto(int roomId, int userId, String content){
-        this.roomId.setId(roomId);
-        this.userId.getChattingRoomForUserIds().get(userId);
-        this.content = content;
-    }*/
-
+    private String userType;
+    private String messageType;
 }
