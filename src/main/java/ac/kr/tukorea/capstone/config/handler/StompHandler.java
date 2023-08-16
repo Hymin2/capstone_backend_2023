@@ -6,6 +6,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
+
 @Component
 public class StompHandler extends ChannelInterceptorAdapter {
     @Override
@@ -15,10 +17,10 @@ public class StompHandler extends ChannelInterceptorAdapter {
 
         switch (accessor.getCommand()){
             case CONNECT:
-
+                System.out.println(sessionId + " open");
                 break;
             case DISCONNECT:
-
+                System.out.println(sessionId + " closed");
                 break;
             default:
                 break;

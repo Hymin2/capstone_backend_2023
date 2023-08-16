@@ -18,7 +18,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer  {
         //origins를 개발 도메인으로 변경하니 잘 동작하였다.
         //이유는 왜 그런지 아직 찾지 못함
         registry.addEndpoint("/stomp/chat")
-                .setAllowedOrigins("*").withSockJS();
+                .setAllowedOriginPatterns("*");
         //핸드셰이크 경로
     }
 
