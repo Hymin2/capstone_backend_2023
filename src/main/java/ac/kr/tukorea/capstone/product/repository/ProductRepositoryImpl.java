@@ -167,8 +167,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                 .select(Projections.constructor(RecommendProductVo.class,
                         productDetail.product.id,
                         productDetail.product.id.count().intValue(),
-                        JPAExpressions.select(usedProductPrice.id.count().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productId)),
-                        JPAExpressions.select(usedProductPrice.price.avg().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productId))))
+                        JPAExpressions.select(usedProductPrice.id.count().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productDetail.product.id)),
+                        JPAExpressions.select(usedProductPrice.price.avg().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productDetail.product.id))))
                 .from(productDetail)
                 .where(productDetail.detail.id.in(JPAExpressions.select(detail.id).from(productDetail).where(productDetail.product.id.eq(productId))))
                 .groupBy(productDetail.product.id)

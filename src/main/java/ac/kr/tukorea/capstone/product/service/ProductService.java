@@ -69,29 +69,37 @@ public class ProductService {
         for(RecommendProductVo rp : recommendProducts){
             if(rp.getProductId() == productId) continue;
 
+            System.out.println(rp.getAveragePrice() + " " + rp.getTransactionNum());
             int score = 0;
 
             score = rp.getDetailNum() * 2;
             int priceComparison = Math.abs(avgPrice - rp.getAveragePrice()) * 100 / avgPrice;
 
-            if(priceComparison <= 10) score += 10;
-            else if(priceComparison <= 20) score += 5;
-            else if(priceComparison <= 30) score += 3;
+            if(priceComparison <= 5) score += 10;
+            else if(priceComparison <= 10) score += 7;
+            else if(priceComparison <= 15) score += 5;
+            else if(priceComparison <= 20) score += 3;
+            else if(priceComparison <= 25) score += 1;
 
             int transactionNum = rp.getTransactionNum();
 
-            if(transactionNum >= 1000) score += 10;
-            else if(transactionNum >= 500) score += 5;
-            else if(transactionNum >= 300) score += 3;
+            if(transactionNum >= 1000) score += 5;
+            else if(transactionNum >= 500) score += 3;
+            else if(transactionNum >= 300) score += 1;
 
             rp.setScore(score);
         }
 
+        System.out.println(avgPrice);
+
+        recommendProducts.stream().sorted(Comparator.comparing(RecommendProductVo::getScore).reversed().thenComparing(RecommendProductVo::getProductId))
+                .forEach((i) -> System.out.println(i.getProductId() + ": " + i.getScore() + ", " + i.getAveragePrice()));
+
         List<Long> recommendProductIdList = recommendProducts
                 .stream()
-                .sorted(Comparator.comparing(RecommendProductVo::getScore))
+                .sorted(Comparator.comparing(RecommendProductVo::getScore).reversed())
                 .mapToLong(RecommendProductVo::getProductId)
-                .limit(5)
+                .limit(5L)
                 .boxed()
                 .collect(Collectors.toList());
 

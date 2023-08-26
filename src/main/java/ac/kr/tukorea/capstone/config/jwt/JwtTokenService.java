@@ -94,6 +94,10 @@ public class JwtTokenService {
         }
     }
 
+    public boolean validateAccessToken(String accessToken){
+        return parseClaims(accessToken) != null;
+    }
+
     public void validateRefreshToken(String refreshToken, String username){
         JwtRefreshToken jwtRefreshToken = jwtRefreshTokenRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new RefreshTokenExpiredException());
 
