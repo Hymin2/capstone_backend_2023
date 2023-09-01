@@ -1,5 +1,4 @@
-package ac.kr.tukorea.capstone.config.jwt;
-
+package ac.kr.tukorea.capstone.fcm.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +8,9 @@ import javax.persistence.Id;
 
 @RequiredArgsConstructor
 @Getter
-@RedisHash("refresh_token")
-public class JwtRefreshToken {
+@RedisHash("fcm")
+public class FcmToken {
     @Id
-    private final String refreshToken;
-    private final String username;
+    private String username;
+    private String token;
 }

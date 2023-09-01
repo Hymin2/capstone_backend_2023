@@ -1,5 +1,4 @@
-package ac.kr.tukorea.capstone.config.jwt;
-
+package ac.kr.tukorea.capstone.chat.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +8,10 @@ import javax.persistence.Id;
 
 @RequiredArgsConstructor
 @Getter
-@RedisHash("refresh_token")
-public class JwtRefreshToken {
+@RedisHash("chat_session")
+public class ChattingRoomSession {
     @Id
-    private final String refreshToken;
-    private final String username;
+    Long roomId;
+    int participantNum;
+
 }
