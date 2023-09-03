@@ -69,7 +69,6 @@ public class ProductService {
         for(RecommendProductVo rp : recommendProducts){
             if(rp.getProductId() == productId) continue;
 
-            System.out.println(rp.getAveragePrice() + " " + rp.getTransactionNum());
             int score = 0;
 
             score = rp.getDetailNum() * 2;
@@ -89,11 +88,6 @@ public class ProductService {
 
             rp.setScore(score);
         }
-
-        System.out.println(avgPrice);
-
-        recommendProducts.stream().sorted(Comparator.comparing(RecommendProductVo::getScore).reversed().thenComparing(RecommendProductVo::getProductId))
-                .forEach((i) -> System.out.println(i.getProductId() + ": " + i.getScore() + ", " + i.getAveragePrice()));
 
         List<Long> recommendProductIdList = recommendProducts
                 .stream()

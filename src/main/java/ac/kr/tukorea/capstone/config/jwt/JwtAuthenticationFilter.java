@@ -74,7 +74,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", 200);
-        jsonObject.put("message", "Login success");
+        jsonObject.put("message", userDetails.getNickname());
         jsonObject.put("result", "success");
         jsonObject.put("access_token", accessToken);
         jsonObject.put("refresh_token", refreshToken);

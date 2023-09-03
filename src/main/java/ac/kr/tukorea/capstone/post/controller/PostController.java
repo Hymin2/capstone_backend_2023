@@ -39,12 +39,13 @@ public class PostController {
 
 
     @GetMapping()
-    public ResponseEntity<MessageForm> getSalePostList(@RequestParam(required = false) Optional<Long> productId,
+    public ResponseEntity<MessageForm> getSalePostList(@RequestParam(required = false) Long productId,
                                                        @RequestParam(required = false) String username,
                                                        @RequestParam(required = false) String postTitle,
                                                        @RequestParam(required = false) String postContent,
                                                        @RequestParam(required = false) String isOnSale){
-        List<PostVo> postVos = postService.getSalePostList(productId.get(), username, postTitle, postContent, isOnSale);
+        List<PostVo> postVos = postService.getSalePostList(productId, username, postTitle, postContent, isOnSale);
+
         messageForm = new MessageForm(200, postVos, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);

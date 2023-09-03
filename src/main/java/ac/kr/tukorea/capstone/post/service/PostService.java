@@ -85,10 +85,8 @@ public class PostService {
         post.setIsOnSales("N");
     }
     @Transactional
-    public List<PostVo> getSalePostList(long productId, String username, String postTitle, String postContent, String isOnSale){
-        Product product = productService.getProduct(productId);
-
-        List<PostVo> posts = postRepositoryImpl.getSearchedPostList(product, username, postTitle, postContent, isOnSale);
+    public List<PostVo> getSalePostList(Long productId, String username, String postTitle, String postContent, String isOnSale){
+        List<PostVo> posts = postRepositoryImpl.getSearchedPostList(productId, username, postTitle, postContent, isOnSale);
 
         return posts;
     }

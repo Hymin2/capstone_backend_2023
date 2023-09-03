@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PostRepositoryCustom {
-    List<PostVo> getSearchedPostList(Product product, String username, String postTitle, String postContent, String isOnSale);
+    List<PostVo> getSearchedPostList(Long productId, String username, String postTitle, String postContent, String isOnSale);
 }

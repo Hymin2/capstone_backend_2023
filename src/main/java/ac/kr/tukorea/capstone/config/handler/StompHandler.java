@@ -23,9 +23,13 @@ public class StompHandler extends ChannelInterceptorAdapter {
 
         switch (accessor.getCommand()){
             case CONNECT:
-                String accessToken = (String) accessor.getHeader("Authorization");
-                jwtTokenService.validateAccessToken(accessToken);
+                try {
+                    String accessToken = String.valueOf(accessor.getNativeHeader("Authorization").get(0));
+                    jwtTokenService.validateAccessToken(jwtTokenService.getJwtToken(accessToken));
 
+                } catch (RuntimeException e){
+                    
+                }
                 System.out.println(sessionId + " open");
                 break;
             case SUBSCRIBE:

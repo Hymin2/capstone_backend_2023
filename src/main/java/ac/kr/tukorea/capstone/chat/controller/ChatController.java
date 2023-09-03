@@ -31,16 +31,15 @@ public class ChatController {
     @MessageMapping(value = "/chat/message")
     @Transactional
     public void message(ChattingMessageDto message) throws IOException {
-        log.info("message : {} send by user : {} to room number : {}", message.getContent(), message.getUserId(), message.getRoomId());
+        log.info("message : {} send by user : {} to room number : {}", message.getMessage(), message.getNickname(), message.getRoomId());
 
-        if(message.getMessageType().equals("COMPLETE")){
-            String nickname = userService.getNicknameByUserId(message.getUserId());
-
-            message.setContent(nickname + "님이 거래 완료 요청을 했습니다.");
+        if(message.getMessageType().equals("REQUEST")){
             sendingOperations.convertAndSend("/sub/room/" + message.getRoomId(), message);
 
-            if(chatService.dealComplete(message.getRoomId(), message.getPostId(), message.getMessageType())){
-                message.setContent("거래가 완료 됐습니다.");
+            if(chatService.dealComplete(message.getRoomId(), message.getPostId(), message.getUserType())){
+                message.setMessage("거래가 완료 됐습니다.");
+                message.setMessageType("COMPLETE");
+
                 sendingOperations.convertAndSend("/sub/room/" + message.getRoomId(), message);
             }
         } else sendingOperations.convertAndSend("/sub/room/" + message.getRoomId(), message);

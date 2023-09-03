@@ -1,8 +1,9 @@
 package ac.kr.tukorea.capstone.chat.repository;
 
 
-import ac.kr.tukorea.capstone.chat.entity.QChattingContent;
+import ac.kr.tukorea.capstone.chat.entity.QChattingMessage;
 import ac.kr.tukorea.capstone.chat.entity.QChattingRoom;
+import ac.kr.tukorea.capstone.chat.vo.ChatMessageVo;
 import ac.kr.tukorea.capstone.chat.vo.ChatRoomVo;
 import ac.kr.tukorea.capstone.user.entity.QUser;
 import com.querydsl.core.QueryFactory;
@@ -21,17 +22,17 @@ import java.util.List;
 public class ChatRoomImplRepository implements ChatRoomCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
     private final QChattingRoom chattingRoom = QChattingRoom.chattingRoom;
-    private final QChattingContent chattingContent = QChattingContent.chattingContent;
+    private final QChattingMessage chattingContent = QChattingMessage.chattingMessage;
     private final QUser user = QUser.user;
 
     @Override
-    public List<ChatRoomVo> getSellerRooms(long userId) {
+    public List<ChatRoomVo> getSellerRooms(String username) {
         List<ChatRoomVo> chatRooms = jpaQueryFactory
-                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, user.nickname, chattingContent.content, chattingContent.createdAt))
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath, chattingContent.content, chattingContent.createdAt.stringValue()))
                 .from(chattingRoom)
                 .innerJoin(user)
                 .on(user.eq(chattingRoom.buyer))
-                .innerJoin(chattingContent)
+                .leftJoin(chattingContent)
                 .on(chattingContent.id.eq(
                         JPAExpressions
                                 .select(chattingContent.id)
@@ -39,20 +40,20 @@ public class ChatRoomImplRepository implements ChatRoomCustomRepository{
                                 .where(chattingContent.chattingRoom.eq(chattingRoom))
                                 .orderBy(chattingContent.createdAt.desc())
                                 .limit(1)))
-                .where(chattingRoom.seller.id.eq(userId))
+                .where(chattingRoom.seller.username.eq(username))
                 .fetch();
 
         return chatRooms;
     }
 
     @Override
-    public List<ChatRoomVo> getBuyerRooms(long userId) {
+    public List<ChatRoomVo> getBuyerRooms(String username) {
         List<ChatRoomVo> chatRooms = jpaQueryFactory
-                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, user.nickname, chattingContent.content, chattingContent.createdAt))
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath, chattingContent.content, chattingContent.createdAt.stringValue()))
                 .from(chattingRoom)
                 .innerJoin(user)
                 .on(user.eq(chattingRoom.seller))
-                .innerJoin(chattingContent)
+                .leftJoin(chattingContent)
                 .on(chattingContent.id.eq(
                         JPAExpressions
                                 .select(chattingContent.id)
@@ -60,9 +61,22 @@ public class ChatRoomImplRepository implements ChatRoomCustomRepository{
                                 .where(chattingContent.chattingRoom.eq(chattingRoom))
                                 .orderBy(chattingContent.createdAt.desc())
                                 .limit(1)))
-                .where(chattingRoom.buyer.id.eq(userId))
+                .where(chattingRoom.buyer.username.eq(username))
                 .fetch();
 
         return chatRooms;
+    }
+
+    @Override
+    public List<ChatMessageVo> getChatMessages(long roomId) {
+        List<ChatMessageVo> messages = jpaQueryFactory
+                .select(Projections.constructor(ChatMessageVo.class, chattingContent.messageType, chattingContent.content, chattingContent.sendUser.username, chattingContent.createdAt))
+                .from(chattingContent)
+                .innerJoin(chattingRoom)
+                .on(chattingContent.chattingRoom.eq(chattingRoom))
+                .where(chattingContent.chattingRoom.id.eq(roomId))
+                .fetch();
+
+        return messages;
     }
 }

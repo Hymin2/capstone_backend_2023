@@ -38,7 +38,7 @@ public class ChattingRoom {
     private User buyer;
 
     @OneToMany(mappedBy = "chattingRoom", fetch = FetchType.LAZY)
-    private List<ChattingContent> chattingContents;
+    private List<ChattingMessage> chattingMessages;
 
     public void setSeller(User seller){
         this.seller = seller;

@@ -12,6 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
 @RequiredArgsConstructor
+@Repository
 public class PostRepositoryImpl implements PostRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -29,7 +31,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     private final QLikePost likePost = QLikePost.likePost;
 
     @Override
-    public List<PostVo> getSearchedPostList(Product product, String username, String postTitle, String postContent, String isOnSale) {
+    public List<PostVo> getSearchedPostList(Long productId, String username, String postTitle, String postContent, String isOnSale) {
         List<PostVo> posts = jpaQueryFactory
                 .selectFrom(post)
                 .innerJoin(user)
@@ -38,11 +40,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .on(post.product.eq(this.product))
                 .innerJoin(postImage)
                 .on(postImage.post.eq(post))
-                .where(eqProduct(product), eqUsername(username), containPostTitle(postTitle), containsPostContent(postContent), isOnSale(isOnSale))
+                .where(eqProductId(productId), eqUsername(username), containPostTitleOrContent(postTitle), isOnSale(isOnSale))
                 .orderBy(post.id.desc())
                 .distinct()
                 .transform(groupBy(post.id).list(
-                  Projections.constructor(PostVo.class,
+                      Projections.constructor(PostVo.class,
                           post.id,
                           user.username,
                           user.nickname,
@@ -63,19 +65,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
         return user.username.eq(username);
     }
 
-    private BooleanExpression eqProduct(Product product){
-        if(product == null) return null;
-        return post.product.eq(product);
+    private BooleanExpression eqProductId(Long productId){
+        if(productId == null) return null;
+        return post.product.id.eq(productId);
     }
 
-    private BooleanExpression containPostTitle(String postTitle){
-        if(postTitle == null) return null;
-        return post.postTitle.contains(postTitle);
-    }
-
-    private BooleanExpression containsPostContent(String postContent){
-        if(postContent == null) return null;
-        return post.postContent.contains(postContent);
+    private BooleanExpression containPostTitleOrContent(String str){
+        if(str == null) return null;
+        return post.postTitle.contains(str).or(post.postContent.contains(str));
     }
 
     private BooleanExpression isOnSale(String isOnSale){

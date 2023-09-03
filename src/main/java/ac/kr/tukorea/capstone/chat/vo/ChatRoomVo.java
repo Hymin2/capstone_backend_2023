@@ -11,7 +11,10 @@ import lombok.Setter;
 @Setter
 public class ChatRoomVo {
     private long roomId;
-    private String otherNickname;
+    private long postId;
+    private String opponentUsername;
+    private String opponentNickname;
+    private String opponentUserImage;
     private String recentMessage;
     private String recentMessageTime;
 }

@@ -68,11 +68,9 @@ public class JwtTokenService {
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
-    public String getJwtToken(HttpServletRequest request){
-        String header = request.getHeader("Authorization");
-
-        if(Strings.hasLength(header) && header.startsWith("Bearer "))
-            return header.substring(7);
+    public String getJwtToken(String token){
+        if(Strings.hasLength(token) && token.startsWith("Bearer "))
+            return token.substring(7);
 
         return null;
     }
@@ -127,7 +125,7 @@ public class JwtTokenService {
     }
 
     public String refreshAccessToken(HttpServletRequest request, String username){
-        String refreshToken = getJwtToken(request);
+        String refreshToken = getJwtToken(request.getHeader("Authorization"));
         validateRefreshToken(refreshToken, username);
 
         return createAccessToken(userDetailsImplService.loadUserByUsername(username));

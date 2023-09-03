@@ -16,9 +16,9 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChattingContent {
+public class ChattingMessage {
     public enum MessageType{
-        TALK, COMPLETE
+        TALK, REQUEST, COMPLETE
     }
 
     @Id
@@ -40,7 +40,7 @@ public class ChattingContent {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "send_user_id")
-    private User sendUserId;
+    private User sendUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")

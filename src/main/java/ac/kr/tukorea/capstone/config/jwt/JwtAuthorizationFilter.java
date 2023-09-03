@@ -23,7 +23,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String jwtToken = jwtTokenService.getJwtToken(request);
+        String jwtToken = jwtTokenService.getJwtToken(request.getHeader("Authorization"));
 
         try {
             if(!request.getRequestURI().startsWith("/api/v1/user/refresh") && !request.getRequestURI().startsWith("/api/v1/user/register") && jwtToken != null) {

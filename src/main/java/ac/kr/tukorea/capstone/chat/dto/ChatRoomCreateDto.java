@@ -12,6 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChatRoomCreateDto {
     private long salePostId;
-    private long sellerId;
-    private long buyerId;
+    private String sellerUsername;
+    private String buyerUsername;
 }

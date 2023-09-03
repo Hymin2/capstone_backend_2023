@@ -1,17 +1,16 @@
 package ac.kr.tukorea.capstone.chat.mapper;
 
 import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
-import ac.kr.tukorea.capstone.chat.entity.ChattingContent;
-import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
+import ac.kr.tukorea.capstone.chat.entity.ChattingMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class ChattingContentMapper {
-    public ChattingContent ChattingContentCreateInfo(ChattingMessageDto chattingMessageDto){
+    public ChattingMessage ChattingContentCreateInfo(ChattingMessageDto chattingMessageDto){
         /*
-        return ChattingContent.builder()
+        return ChattingMessage.builder()
                 .content(chattingMessageDto.getContent())
                 .chattingRoomForUserId(chattingMessageDto.getUserId())
                 .chattingRoom(chattingMessageDto.getRoomId())
