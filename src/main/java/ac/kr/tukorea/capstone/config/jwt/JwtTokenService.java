@@ -68,6 +68,17 @@ public class JwtTokenService {
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
+    public String getUsername(String accessToken){
+        Claims claims = parseClaims(accessToken).getBody();
+
+        UserDetailsImpl userDetails = new UserDetailsImpl(User
+                .builder()
+                .username(claims.getSubject())
+                .build());
+
+        return userDetails.getUsername();
+    }
+
     public String getJwtToken(String token){
         if(Strings.hasLength(token) && token.startsWith("Bearer "))
             return token.substring(7);

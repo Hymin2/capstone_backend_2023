@@ -1,8 +1,12 @@
 package ac.kr.tukorea.capstone.chat.service;
 
 import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
+import ac.kr.tukorea.capstone.chat.entity.ChatRoomParticipants;
+import ac.kr.tukorea.capstone.chat.entity.ChatRoomSession;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.repository.ChatRoomCustomRepository;
+import ac.kr.tukorea.capstone.chat.repository.ChatRoomParticipantsRepository;
+import ac.kr.tukorea.capstone.chat.repository.ChatRoomSessionRepository;
 import ac.kr.tukorea.capstone.chat.repository.ChattingRoomRepository;
 import ac.kr.tukorea.capstone.chat.vo.ChatMessageVo;
 import ac.kr.tukorea.capstone.chat.vo.ChatRoomVo;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,8 @@ public class RoomService {
     private final PostService postService;
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChatRoomCustomRepository chatRoomCustomRepository;
+    private final ChatRoomParticipantsRepository chatRoomParticipantsRepository;
+    private final ChatRoomSessionRepository chatRoomSessionRepository;
 
     @Transactional
     public long createChatRoom(ChatRoomCreateDto chatRoomCreateDto){
@@ -41,7 +48,32 @@ public class RoomService {
 
         chattingRoomRepository.save(chattingRoom);
 
+        chatRoomParticipantsRepository.save(chattingRoom.getId(), 0, List.of(buyer.getUsername(), seller.getUsername()));
+
         return chattingRoom.getId();
+    }
+
+    public void saveChatRoomSession(String sessionId, String username, String destination){
+        chatRoomSessionRepository.save(sessionId, username, destination);
+    }
+
+    public Optional<ChatRoomSession> getChatRoomSession(String sessionId){
+        return chatRoomSessionRepository.findBySessionId(sessionId);
+    }
+
+    public void updateChatRoomSession(String sessionId, ChatRoomSession chatRoomSession){
+        chatRoomSessionRepository.update(sessionId, chatRoomSession);
+    }
+
+    public void deleteChatRoomSession(String sessionId){
+        chatRoomSessionRepository.delete(sessionId);
+    }
+
+    public Optional<ChatRoomParticipants> getChatRoomParticipants(Long room){
+        return chatRoomParticipantsRepository.findByRoom(room);
+    }
+    public void updateChatRoomParticipants(Long room, ChatRoomParticipants chatRoomParticipants){
+        chatRoomParticipantsRepository.update(room, chatRoomParticipants);
     }
 
     @Transactional

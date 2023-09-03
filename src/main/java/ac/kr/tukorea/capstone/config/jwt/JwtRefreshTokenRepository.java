@@ -1,10 +1,13 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -13,16 +16,20 @@ import java.util.concurrent.TimeUnit;
 @AllArgsConstructor
 public class JwtRefreshTokenRepository {
     private RedisTemplate redisTemplate;
+    private final String hashKey = "refresh_token";
 
     public void save(JwtRefreshToken jwtRefreshToken){
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(jwtRefreshToken.getRefreshToken(), jwtRefreshToken.getUsername());
-        redisTemplate.expire(jwtRefreshToken.getRefreshToken(), 30L, TimeUnit.DAYS);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+        Map<String, String> map = new HashMap<>();
+        map.put(jwtRefreshToken.getRefreshToken(), jwtRefreshToken.getUsername());
+
+        hashOperations.putAll(hashKey, map);
     }
 
     public Optional<JwtRefreshToken> findByRefreshToken(String refreshToken){
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String username = valueOperations.get(refreshToken);
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+        String username = hashOperations.get(hashKey, refreshToken);
 
         if(Objects.isNull(username))
             return Optional.empty();
@@ -32,6 +39,6 @@ public class JwtRefreshTokenRepository {
     }
 
     public void deleteByRefreshToken(String refreshToken){
-        redisTemplate.delete(refreshToken);
+        redisTemplate.opsForHash().delete(hashKey, refreshToken);
     }
 }

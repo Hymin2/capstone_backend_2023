@@ -19,7 +19,6 @@ import java.io.IOException;
 public class ChatController {
     private final SimpMessageSendingOperations sendingOperations;
     private final ChatService chatService;
-    private final UserService userService;
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
     private MessageForm messageForm = new MessageForm();
 

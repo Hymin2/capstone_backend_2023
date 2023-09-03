@@ -1,10 +1,13 @@
 package ac.kr.tukorea.capstone.config.jwt;
 
 import ac.kr.tukorea.capstone.config.auth.UserDetailsImpl;
+import ac.kr.tukorea.capstone.fcm.service.FcmService;
 import ac.kr.tukorea.capstone.user.dto.UserLoginDto;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +26,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenProvider;
+    private final FcmService fcmService;
     private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenService jwtTokenProvider){
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenService jwtTokenProvider, FcmService fcmService){
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.fcmService = fcmService;
 
         setFilterProcessesUrl("/api/v1/user/login");
     }
@@ -69,6 +74,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String accessToken = jwtTokenProvider.createAccessToken(userDetails);
         String refreshToken = jwtTokenProvider.createRefreshToken(userDetails.getUsername());
+
+        String fcmToken = request.getHeader("fcmToken");
+        fcmService.saveFcmToken(userDetails.getUsername(), fcmToken);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 

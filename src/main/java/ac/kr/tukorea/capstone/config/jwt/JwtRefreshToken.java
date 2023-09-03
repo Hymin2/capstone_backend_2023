@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @RequiredArgsConstructor
 @Getter
-@RedisHash("refresh_token")
+@RedisHash(value = "refresh_token")
 public class JwtRefreshToken {
     @Id
     private final String refreshToken;
