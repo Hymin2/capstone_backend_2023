@@ -2,7 +2,10 @@ package ac.kr.tukorea.capstone.chat.entity;
 
 import ac.kr.tukorea.capstone.post.entity.Post;
 import ac.kr.tukorea.capstone.user.entity.User;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;

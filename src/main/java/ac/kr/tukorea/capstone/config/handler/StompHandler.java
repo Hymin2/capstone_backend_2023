@@ -8,8 +8,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
-
 @Component
 @RequiredArgsConstructor
 public class StompHandler extends ChannelInterceptorAdapter {

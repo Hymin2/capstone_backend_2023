@@ -5,7 +5,6 @@ import ac.kr.tukorea.capstone.product.dto.ProductDetailsDto;
 import ac.kr.tukorea.capstone.product.dto.ProductListDto;
 import ac.kr.tukorea.capstone.product.dto.UsedProductPriceDto;
 import ac.kr.tukorea.capstone.product.service.ProductService;
-import ac.kr.tukorea.capstone.product.vo.UsedProductPriceVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/product")

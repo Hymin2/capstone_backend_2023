@@ -1,7 +1,6 @@
 package ac.kr.tukorea.capstone.chat.service;
 
 import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
-import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
 import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.repository.ChatRoomCustomRepository;
 import ac.kr.tukorea.capstone.chat.repository.ChattingRoomRepository;

@@ -4,7 +4,6 @@ import ac.kr.tukorea.capstone.post.entity.QLikePost;
 import ac.kr.tukorea.capstone.post.entity.QPost;
 import ac.kr.tukorea.capstone.post.entity.QPostImage;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
-import ac.kr.tukorea.capstone.product.entity.Product;
 import ac.kr.tukorea.capstone.product.entity.QProduct;
 import ac.kr.tukorea.capstone.user.entity.QUser;
 import com.querydsl.core.types.Projections;

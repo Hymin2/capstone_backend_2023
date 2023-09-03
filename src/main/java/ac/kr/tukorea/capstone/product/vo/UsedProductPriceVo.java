@@ -1,6 +1,5 @@
 package ac.kr.tukorea.capstone.product.vo;
 
-import ac.kr.tukorea.capstone.product.entity.UsedProductPrice;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

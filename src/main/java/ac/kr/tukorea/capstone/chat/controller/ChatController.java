@@ -1,19 +1,14 @@
 package ac.kr.tukorea.capstone.chat.controller;
 
-import ac.kr.tukorea.capstone.chat.dto.ChatRoomCreateDto;
 import ac.kr.tukorea.capstone.chat.dto.ChattingMessageDto;
-import ac.kr.tukorea.capstone.chat.entity.ChattingRoom;
 import ac.kr.tukorea.capstone.chat.service.ChatService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
 import ac.kr.tukorea.capstone.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
