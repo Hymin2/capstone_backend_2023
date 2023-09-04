@@ -13,6 +13,7 @@ import lombok.Setter;
 public class ChattingMessageDto {
     private long roomId;
     private long postId;
+    private String username;
     private String nickname;
     private String userType;
     private String message;

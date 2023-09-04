@@ -15,6 +15,4 @@ public class ChatRoomVo {
     private String opponentUsername;
     private String opponentNickname;
     private String opponentUserImage;
-    private String recentMessage;
-    private String recentMessageTime;
 }

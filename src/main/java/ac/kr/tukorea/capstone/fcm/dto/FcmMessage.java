@@ -23,8 +23,8 @@ public class FcmMessage {
     @AllArgsConstructor
     @Getter
     public static class Data{
-        private long roomId;
-        private long postId;
+        private String roomId;
+        private String postId;
         private String username;
         private String nickname;
         private String userImage;

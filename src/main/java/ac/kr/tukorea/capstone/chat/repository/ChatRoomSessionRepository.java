@@ -13,13 +13,14 @@ import java.util.Optional;
 public class ChatRoomSessionRepository {
     private final RedisTemplate redisTemplate;
     private final String hashKey = "room_session";
-    private HashOperations<String, String, ChatRoomSession> hashOperations = redisTemplate.opsForHash();
 
     public void save(String sessionId, String username, String destination){
+        HashOperations<String, String, ChatRoomSession> hashOperations = redisTemplate.opsForHash();
         hashOperations.put(hashKey, sessionId, new ChatRoomSession(username, destination));
     }
 
     public void save(String sessionId, ChatRoomSession chatRoomSession){
+        HashOperations<String, String, ChatRoomSession> hashOperations = redisTemplate.opsForHash();
         hashOperations.put(hashKey, sessionId, chatRoomSession);
     }
 
@@ -37,6 +38,7 @@ public class ChatRoomSessionRepository {
     }
 
     public void delete(String sessionId){
+        HashOperations<String, String, ChatRoomSession> hashOperations = redisTemplate.opsForHash();
         hashOperations.delete(hashKey, sessionId);
     }
 }

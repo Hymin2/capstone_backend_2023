@@ -36,7 +36,7 @@ public class FcmService {
         fcmTokenRedisRepository.deleteByUsername(username);
     }
 
-    public void sendMessageTo(String targetToken, String message) throws IOException {
+    public void sendMessageTo(String message) throws IOException {
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message,
                 MediaType.get("application/json; charset=utf-8"));
@@ -52,14 +52,14 @@ public class FcmService {
         System.out.println(response.body().string());
     }
 
-    private String makeMessage(String targetToken, long roomId, long postId, String username, String nickname,
+    public String makeMessage(String targetToken, long roomId, long postId, String username, String nickname,
                                String userImage, String userType, String message, String messageType, String datetime) throws JsonParseException, JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)
                         .data(FcmMessage.Data.builder()
-                                .roomId(roomId)
-                                .postId(postId)
+                                .roomId(String.valueOf(roomId))
+                                .postId(String.valueOf(postId))
                                 .username(username)
                                 .nickname(nickname)
                                 .userImage(userImage)

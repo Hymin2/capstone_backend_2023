@@ -103,9 +103,9 @@ public class RoomService {
         return chattingRoomRepository.findById(roomId).orElseThrow(NotFoundRoomException::new);
     }
 
-    public List<ChatMessageVo> getChatMessages(long roomId) {
-        List<ChatMessageVo> messages = chatRoomCustomRepository.getChatMessages(roomId);
+    public ChatRoomVo getChatRoom(long roomId) {
+        ChatRoomVo chatRoom = chatRoomCustomRepository.getChatRoom(roomId);
 
-        return messages;
+        return chatRoom;
     }
 }

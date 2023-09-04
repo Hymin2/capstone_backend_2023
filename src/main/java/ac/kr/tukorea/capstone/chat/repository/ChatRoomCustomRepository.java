@@ -8,5 +8,5 @@ import java.util.List;
 public interface ChatRoomCustomRepository {
     List<ChatRoomVo> getSellerRooms(String username);
     List<ChatRoomVo> getBuyerRooms(String username);
-    List<ChatMessageVo> getChatMessages(long roomId);
+    ChatRoomVo getChatRoom(long roomId);
 }

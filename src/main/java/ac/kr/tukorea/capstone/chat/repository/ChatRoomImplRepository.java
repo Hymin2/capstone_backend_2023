@@ -19,24 +19,15 @@ import java.util.List;
 public class ChatRoomImplRepository implements ChatRoomCustomRepository{
     private final JPAQueryFactory jpaQueryFactory;
     private final QChattingRoom chattingRoom = QChattingRoom.chattingRoom;
-    private final QChattingMessage chattingContent = QChattingMessage.chattingMessage;
     private final QUser user = QUser.user;
 
     @Override
     public List<ChatRoomVo> getSellerRooms(String username) {
         List<ChatRoomVo> chatRooms = jpaQueryFactory
-                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath, chattingContent.content, chattingContent.createdAt.stringValue()))
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath))
                 .from(chattingRoom)
                 .innerJoin(user)
                 .on(user.eq(chattingRoom.buyer))
-                .leftJoin(chattingContent)
-                .on(chattingContent.id.eq(
-                        JPAExpressions
-                                .select(chattingContent.id)
-                                .from(chattingContent)
-                                .where(chattingContent.chattingRoom.eq(chattingRoom))
-                                .orderBy(chattingContent.createdAt.desc())
-                                .limit(1)))
                 .where(chattingRoom.seller.username.eq(username))
                 .fetch();
 
@@ -46,18 +37,10 @@ public class ChatRoomImplRepository implements ChatRoomCustomRepository{
     @Override
     public List<ChatRoomVo> getBuyerRooms(String username) {
         List<ChatRoomVo> chatRooms = jpaQueryFactory
-                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath, chattingContent.content, chattingContent.createdAt.stringValue()))
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath))
                 .from(chattingRoom)
                 .innerJoin(user)
                 .on(user.eq(chattingRoom.seller))
-                .leftJoin(chattingContent)
-                .on(chattingContent.id.eq(
-                        JPAExpressions
-                                .select(chattingContent.id)
-                                .from(chattingContent)
-                                .where(chattingContent.chattingRoom.eq(chattingRoom))
-                                .orderBy(chattingContent.createdAt.desc())
-                                .limit(1)))
                 .where(chattingRoom.buyer.username.eq(username))
                 .fetch();
 
@@ -65,15 +48,16 @@ public class ChatRoomImplRepository implements ChatRoomCustomRepository{
     }
 
     @Override
-    public List<ChatMessageVo> getChatMessages(long roomId) {
-        List<ChatMessageVo> messages = jpaQueryFactory
-                .select(Projections.constructor(ChatMessageVo.class, chattingContent.messageType, chattingContent.content, chattingContent.sendUser.username, chattingContent.createdAt))
-                .from(chattingContent)
-                .innerJoin(chattingRoom)
-                .on(chattingContent.chattingRoom.eq(chattingRoom))
-                .where(chattingContent.chattingRoom.id.eq(roomId))
-                .fetch();
+    public ChatRoomVo getChatRoom(long roomId) {
+        ChatRoomVo chatRoom = jpaQueryFactory
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post, user.username, user.nickname, user.imagePath))
+                .from(chattingRoom)
+                .innerJoin(user)
+                .on(chattingRoom.buyer.eq(user))
+                .where(chattingRoom.id.eq(roomId))
+                .limit(1)
+                .fetchOne();
 
-        return messages;
+        return chatRoom;
     }
 }

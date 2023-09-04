@@ -28,9 +28,9 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<MessageForm> getChatMessages(@PathVariable long roomId){
-        List<ChatMessageVo> messages = roomService.getChatMessages(roomId);
-        messageForm = new MessageForm(200, messages, "success");
+    public ResponseEntity<MessageForm> getChatRoom(@PathVariable long roomId){
+        ChatRoomVo chatRoom = roomService.getChatRoom(roomId);
+        messageForm = new MessageForm(200, chatRoom, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }
