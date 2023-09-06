@@ -105,7 +105,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         List<ProductVo> products = jpaQueryFactory.selectFrom(product)
                 .innerJoin(productImage)
                 .on(productImage.product.eq(product))
-                .innerJoin(usedProductPrice)
+                .leftJoin(usedProductPrice)
                 .on(usedProductPrice.product.eq(product))
                 .where(product.category.id.eq(categoryId))
                 .distinct()
@@ -129,7 +129,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
         List<ProductVo> products = jpaQueryFactory.selectFrom(product)
                 .innerJoin(productImage)
                 .on(productImage.product.eq(product))
-                .innerJoin(usedProductPrice)
+                .leftJoin(usedProductPrice)
                 .on(usedProductPrice.product.eq(product))
                 .where(product.id.in(productIdList))
                 .distinct()
@@ -170,7 +170,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                         JPAExpressions.select(usedProductPrice.id.count().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productDetail.product.id)),
                         JPAExpressions.select(usedProductPrice.price.avg().intValue()).from(usedProductPrice).where(usedProductPrice.product.id.eq(productDetail.product.id))))
                 .from(productDetail)
-                .where(productDetail.detail.id.in(JPAExpressions.select(detail.id).from(productDetail).where(productDetail.product.id.eq(productId))))
+                .where(productDetail.detail.id.in(JPAExpressions.select(productDetail.detail.id).from(productDetail).where(productDetail.product.id.eq(productId))))
                 .groupBy(productDetail.product.id)
                 .fetch();
 

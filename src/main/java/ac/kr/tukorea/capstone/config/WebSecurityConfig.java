@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -37,6 +38,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        // swagger
+        web.ignoring().antMatchers(
+                "/v2/api-docs",  "/configuration/ui",
+                "/swagger-resources", "/configuration/security",
+                "/swagger-ui.html", "/webjars/**","/swagger/**");
+    }
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
         httpSecurity
@@ -58,6 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
 
                 .authorizeRequests()
+                    .antMatchers("/swagger-ui/**").permitAll()
                     .antMatchers("/api/v1/user/register/**", "/api/v1/user/refresh/**").permitAll()
                     .antMatchers("/api/v1/product/img/**", "/api/v1/user/img/**", "/api/v1/post/img/**").permitAll()
                     .antMatchers("/stomp/chat/**").permitAll()

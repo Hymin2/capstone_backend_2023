@@ -50,7 +50,7 @@ public class ChatRoomImplRepository implements ChatRoomCustomRepository{
     @Override
     public ChatRoomVo getChatRoom(long roomId) {
         ChatRoomVo chatRoom = jpaQueryFactory
-                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post, user.username, user.nickname, user.imagePath))
+                .select(Projections.constructor(ChatRoomVo.class, chattingRoom.id, chattingRoom.post.id, user.username, user.nickname, user.imagePath))
                 .from(chattingRoom)
                 .innerJoin(user)
                 .on(chattingRoom.buyer.eq(user))

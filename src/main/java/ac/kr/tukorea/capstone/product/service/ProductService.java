@@ -72,13 +72,16 @@ public class ProductService {
             int score = 0;
 
             score = rp.getDetailNum() * 2;
-            int priceComparison = Math.abs(avgPrice - rp.getAveragePrice()) * 100 / avgPrice;
 
-            if(priceComparison <= 5) score += 10;
-            else if(priceComparison <= 10) score += 7;
-            else if(priceComparison <= 15) score += 5;
-            else if(priceComparison <= 20) score += 3;
-            else if(priceComparison <= 25) score += 1;
+            if(avgPrice != 0) {
+                int priceComparison = Math.abs(avgPrice - rp.getAveragePrice()) * 100 / avgPrice;
+
+                if (priceComparison <= 5) score += 10;
+                else if (priceComparison <= 10) score += 7;
+                else if (priceComparison <= 15) score += 5;
+                else if (priceComparison <= 20) score += 3;
+                else if (priceComparison <= 25) score += 1;
+            }
 
             int transactionNum = rp.getTransactionNum();
 
