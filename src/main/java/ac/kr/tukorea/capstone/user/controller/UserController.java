@@ -30,7 +30,6 @@ import java.nio.file.Paths;
 public class UserController {
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
-
     private MessageForm messageForm = new MessageForm();
 
     @PostMapping(value = "/register")
@@ -114,6 +113,8 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(messageForm);
     }
+
+
 
     @GetMapping(value = "/follow/following")
     public ResponseEntity<MessageForm> getFollowingList(@RequestParam String username){

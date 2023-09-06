@@ -121,6 +121,7 @@ public class ProductService {
         filterMap.put("processor", new ArrayList<>());
         filterMap.put("ram", new ArrayList<>());
         filterMap.put("memory", new ArrayList<>());
+        filterMap.put("graphic", new ArrayList<>());
 
         for(String str : filters){
             String filterName = ProductFilterDetail.getValue(str);
@@ -132,6 +133,7 @@ public class ProductService {
             else if(filterName.startsWith("PROCESSOR")) filterMap.get("processor").add(ProductFilterDetail.getFilter(str));
             else if(filterName.startsWith("RAM")) filterMap.get("ram").add(ProductFilterDetail.getFilter(str));
             else if(filterName.startsWith("MEMORY")) filterMap.get("memory").add(ProductFilterDetail.getFilter(str));
+            else if(filterName.startsWith("GRAPHIC")) filterMap.get("graphic").add(ProductFilterDetail.getFilter(str));
         }
 
         return filterMap;

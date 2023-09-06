@@ -25,6 +25,7 @@ public class FcmService {
     private final FcmTokenRedisRepository fcmTokenRedisRepository;
 
     public void saveFcmToken(String username, String fcmToken){
+        System.out.println("fcm Token: " + fcmToken);
         fcmTokenRedisRepository.save(username, fcmToken);
     }
 

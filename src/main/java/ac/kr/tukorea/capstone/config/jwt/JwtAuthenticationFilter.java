@@ -76,6 +76,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtTokenProvider.createRefreshToken(userDetails.getUsername());
 
         String fcmToken = request.getHeader("fcmToken");
+
         fcmService.saveFcmToken(userDetails.getUsername(), fcmToken);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

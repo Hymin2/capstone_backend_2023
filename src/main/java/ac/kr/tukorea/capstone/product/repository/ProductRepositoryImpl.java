@@ -45,9 +45,11 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                             searchFilters(productFilters.getOrDefault("processor", null)),
                             searchFilters(productFilters.getOrDefault("ram", null)),
                             searchFilters(productFilters.getOrDefault("memory", null)),
+                            searchFilters(productFilters.getOrDefault("graphic", null)),
                             containsName(name))
                     .distinct()
                     .groupBy(product.id, productImage.path)
+                    .limit(250L)
                     .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
                             product.id,
                             product.productName,
@@ -68,10 +70,12 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
                             searchFilters(productFilters.getOrDefault("processor", null)),
                             searchFilters(productFilters.getOrDefault("ram", null)),
                             searchFilters(productFilters.getOrDefault("memory", null)),
+                            searchFilters(productFilters.getOrDefault("graphic", null)),
                             containsName(name))
                     .distinct()
                     .groupBy(product.id, productImage.path)
                     .having(havingPrice(productFilters.get("price")))
+                    .limit(250L)
                     .transform(groupBy(product.id).list(Projections.constructor(ProductVo.class,
                             product.id,
                             product.productName,
