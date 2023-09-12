@@ -39,7 +39,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .on(post.product.eq(this.product))
                 .innerJoin(postImage)
                 .on(postImage.post.eq(post))
-                .where(eqProductId(productId), eqUsername(username), containPostTitleOrContent(postTitle), isOnSale(isOnSale))
+                .where(eqProductId(productId), containPostTitleOrContent(postTitle), isOnSale(isOnSale))
                 .orderBy(post.id.desc())
                 .distinct()
                 .transform(groupBy(post.id).list(
@@ -55,7 +55,7 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                           post.price,
                           post.postCreatedTime,
                           list(Projections.constructor(String.class, postImage.imagePath)),
-                          JPAExpressions.selectOne().from(likePost).where(likePost.post.eq(post), likePost.user.eq(user)).limit(1))));
+                          JPAExpressions.selectOne().from(likePost).where(likePost.post.eq(post), likePost.user.username.eq(username)).limit(1))));
 
         return posts;
     }
