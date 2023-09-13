@@ -91,6 +91,13 @@ public class PostService {
     }
 
     @Transactional
+    public List<PostVo> getMyPostList(String username, String isOnSale){
+        List<PostVo> posts = postRepositoryImpl.getMyPostList(username, isOnSale);
+
+        return posts;
+    }
+
+    @Transactional
     public void deletePost(Long postId){
         postRepository.deleteById(postId);
     }

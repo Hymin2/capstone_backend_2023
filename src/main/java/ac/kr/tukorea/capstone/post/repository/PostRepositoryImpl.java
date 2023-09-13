@@ -59,6 +59,38 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
 
         return posts;
     }
+
+    @Override
+    public List<PostVo> getMyPostList(String username, String isOnSale) {
+        List<PostVo> posts = jpaQueryFactory
+                .selectFrom(post)
+                .innerJoin(user)
+                .on(post.user.eq(user))
+                .innerJoin(this.product)
+                .on(post.product.eq(this.product))
+                .innerJoin(postImage)
+                .on(postImage.post.eq(post))
+                .where(eqUsername(username), isOnSale(isOnSale))
+                .orderBy(post.id.desc())
+                .distinct()
+                .transform(groupBy(post.id).list(
+                        Projections.constructor(PostVo.class,
+                                post.id,
+                                user.username,
+                                user.nickname,
+                                user.imagePath,
+                                this.product.productName,
+                                post.postTitle,
+                                post.postContent,
+                                post.isOnSales,
+                                post.price,
+                                post.postCreatedTime,
+                                list(Projections.constructor(String.class, postImage.imagePath)),
+                                JPAExpressions.selectOne().from(likePost).where(likePost.post.eq(post), likePost.user.username.eq(username)).limit(1))));
+
+        return posts;
+    }
+
     private BooleanExpression eqUsername(String username){
         if(username == null) return null;
         return user.username.eq(username);

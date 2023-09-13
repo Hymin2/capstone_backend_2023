@@ -2,6 +2,8 @@ package ac.kr.tukorea.capstone.user.controller;
 
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
+import ac.kr.tukorea.capstone.post.service.PostService;
+import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.user.dto.FollowListDto;
 import ac.kr.tukorea.capstone.user.dto.FollowRegisterDto;
 import ac.kr.tukorea.capstone.user.dto.UserInfoDto;
@@ -23,12 +25,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final PostService postService;
     private final JwtTokenService jwtTokenService;
     private MessageForm messageForm = new MessageForm();
 
@@ -102,6 +106,15 @@ public class UserController {
                                                    @RequestParam(required = false) String otherUsername){
         UserInfoDto userInfoDto = userService.getUserInfo(username, otherUsername);
         messageForm = new MessageForm(200, userInfoDto, "success");
+
+        return ResponseEntity.status(HttpStatus.OK).body(messageForm);
+    }
+
+    @GetMapping(value = "/my-posts")
+    public ResponseEntity<MessageForm> getMyPosts(@RequestParam String username,
+                                                  @RequestParam String isOnSale){
+        List<PostVo> posts = postService.getMyPostList(username, isOnSale);
+        messageForm = new MessageForm(200, posts, "success");
 
         return ResponseEntity.status(HttpStatus.OK).body(messageForm);
     }

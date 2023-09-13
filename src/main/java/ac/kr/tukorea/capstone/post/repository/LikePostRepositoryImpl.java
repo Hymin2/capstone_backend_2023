@@ -41,9 +41,9 @@ public class LikePostRepositoryImpl implements LikePostRepositoryCustom {
                 .transform(groupBy(post.id).list(
                         Projections.constructor(PostVo.class,
                                 post.id,
-                                user.username,
-                                user.nickname,
-                                user.imagePath,
+                                post.user.username,
+                                post.user.nickname,
+                                post.user.imagePath,
                                 this.product.productName,
                                 post.postTitle,
                                 post.postContent,
@@ -51,7 +51,7 @@ public class LikePostRepositoryImpl implements LikePostRepositoryCustom {
                                 post.price,
                                 post.postCreatedTime,
                                 list(Projections.constructor(String.class, postImage.imagePath)),
-                                JPAExpressions.selectOne().from(likePost).where(likePost.post.eq(post), likePost.user.eq(user)).limit(1))));
+                                JPAExpressions.selectOne().from(likePost).where(likePost.post.eq(post), likePost.user.username.eq(username)).limit(1))));
         return posts;
     }
 
