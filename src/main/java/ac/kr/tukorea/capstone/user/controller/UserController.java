@@ -2,6 +2,7 @@ package ac.kr.tukorea.capstone.user.controller;
 
 import ac.kr.tukorea.capstone.config.jwt.JwtTokenService;
 import ac.kr.tukorea.capstone.config.util.MessageForm;
+import ac.kr.tukorea.capstone.fcm.service.FcmService;
 import ac.kr.tukorea.capstone.post.service.PostService;
 import ac.kr.tukorea.capstone.post.vo.PostVo;
 import ac.kr.tukorea.capstone.user.dto.FollowListDto;
@@ -34,6 +35,7 @@ public class UserController {
     private final UserService userService;
     private final PostService postService;
     private final JwtTokenService jwtTokenService;
+    private final FcmService fcmService;
     private MessageForm messageForm = new MessageForm();
 
     @PostMapping(value = "/register")
@@ -79,6 +81,7 @@ public class UserController {
     public ResponseEntity logout(@RequestHeader("Authorization-refresh") String refreshToken,
                                   @RequestParam("username") String username){
         userService.logout(refreshToken, username);
+        fcmService.deleteFcmToken(username);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

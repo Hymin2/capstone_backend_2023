@@ -18,20 +18,20 @@ public class ChatService {
     public boolean dealComplete(long roomId, long postId, String userType) {
         ChattingRoom chattingRoom = roomService.getRoom(roomId);
 
-        if(userType.equals("Buyer") && !chattingRoom.isBuyerDealCompleted()){
+        if(userType.equals("buy") && !chattingRoom.isBuyerDealCompleted()){
             chattingRoom.setBuyerDealCompleted(true);
-
+            System.out.println("구매자 거래 완료");
             if(chattingRoom.isSellerDealCompleted()){
                 postService.setPostIsNotOnSale(postId);
-
+                System.out.println("판매자 거래 완료 상태에서 구매자 거래 완료");
                 return true;
             }
-        } else if (userType.equals("Seller") && !chattingRoom.isSellerDealCompleted()){
+        } else if (userType.equals("sell") && !chattingRoom.isSellerDealCompleted()){
             chattingRoom.setSellerDealCompleted(true);
-
+            System.out.println("판매자 거래 완료");
             if(chattingRoom.isBuyerDealCompleted()){
                 postService.setPostIsNotOnSale(postId);
-
+                System.out.println("구매자 거래 완료 상태에서 판매자 거래 완료");
                 return true;
             }
         }

@@ -33,10 +33,16 @@ public class ChatController {
     @MessageMapping(value = "/chat/message")
     @Transactional
     public void message(ChattingMessageDto message) throws IOException {
-        log.info("message : {} send by user : {} to room number : {}", message.getMessage(), message.getNickname(), message.getRoomId());
+        log.info("message : {} send by user : {} to room number : {}, userType : {}", message.getMessage(), message.getNickname(), message.getRoomId(), message.getUserType());
 
         ChatRoomParticipants chatRoomParticipants = roomService.getChatRoomParticipants(message.getRoomId()).orElse(null);
         System.out.println(chatRoomParticipants.getActualNumOfParticipants());
+
+        boolean isCompleted = false;
+
+        if (message.getMessageType().equals("REQUEST")) {
+            isCompleted = chatService.dealComplete(message.getRoomId(), message.getPostId(), message.getUserType());
+        }
 
         if (chatRoomParticipants.getActualNumOfParticipants() == 1) {
             List<String> usernames = chatRoomParticipants.getParticipants();
@@ -60,6 +66,24 @@ public class ChatController {
 
                             fcmService.sendMessageTo(fcmMessage);
 
+                            if(isCompleted){
+                                message.setMessage("거래가 완료 됐습니다.");
+                                message.setMessageType("COMPLETE");
+
+                                String fcmCompleteMessage = fcmService.makeMessage(fcmToken.getToken(),
+                                        message.getRoomId(),
+                                        message.getPostId(),
+                                        message.getUsername(),
+                                        message.getNickname(),
+                                        null,
+                                        message.getUserType(),
+                                        message.getMessage(),
+                                        message.getMessageType(),
+                                        message.getTime());
+
+                                fcmService.sendMessageTo(fcmCompleteMessage);
+                            }
+
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException(e);
                         } catch (IOException e) {
@@ -72,7 +96,7 @@ public class ChatController {
             if (message.getMessageType().equals("REQUEST")) {
                 sendingOperations.convertAndSend("/sub/room/" + message.getRoomId(), message);
 
-                if (chatService.dealComplete(message.getRoomId(), message.getPostId(), message.getUserType())) {
+                if (isCompleted) {
                     message.setMessage("거래가 완료 됐습니다.");
                     message.setMessageType("COMPLETE");
 

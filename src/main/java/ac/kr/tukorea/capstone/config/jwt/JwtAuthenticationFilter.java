@@ -82,6 +82,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         JSONObject jsonObject = new JSONObject();
+        response.setCharacterEncoding("UTF-8");
         jsonObject.put("status", 200);
         jsonObject.put("message", userDetails.getNickname());
         jsonObject.put("result", "success");
